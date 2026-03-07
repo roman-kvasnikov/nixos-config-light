@@ -39,8 +39,8 @@
       btop
       jq
       eza
-      qt5ct-kde
-      qt6ct-kde
+      # qt5ct-kde
+      # qt6ct-kde
     ];
   };
 }
