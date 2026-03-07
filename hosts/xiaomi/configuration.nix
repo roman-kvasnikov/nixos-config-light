@@ -8,7 +8,7 @@
 }: {
   imports = [
     ./hardware-configuration.nix
-    ../../nixos
+    ../../system
   ];
 
   boot = {
