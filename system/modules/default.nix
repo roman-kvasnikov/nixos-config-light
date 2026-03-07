@@ -1,0 +1,20 @@
+{
+  imports = [
+    ./boot.nix
+    ./environment.nix
+    ./fish.nix
+    ./fonts.nix
+    ./hardware.nix
+    ./home-manager.nix
+    ./i18n.nix
+    ./networking.nix
+    ./nix.nix
+    ./security.nix
+    ./services.nix
+    ./systemd.nix
+    ./time.nix
+    ./user.nix
+
+    # ./hyprland
+  ];
+}
