@@ -33,7 +33,7 @@
 
   services = {
     openssh = {
-      enable = false;
+      enable = true;
 
       settings = {
         X11Forwarding = false;
