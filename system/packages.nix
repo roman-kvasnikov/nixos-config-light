@@ -18,6 +18,7 @@
     killall
     lm_sensors # Hardware monitoring
     dig
+    glibc
 
     # SSH утилиты
     ssh-copy-id

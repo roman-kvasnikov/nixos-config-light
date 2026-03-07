@@ -26,8 +26,9 @@
     # System utilities
     # libnotify # Notification daemon
     # pamixer # Volume control
-    # brightnessctl # Brightness control
+    brightnessctl # Brightness control
 
+    inputs.quickshell.packages.${system}.default
     inputs.caelestia-shell.packages.${system}.default
     inputs.caelestia-cli.packages.${system}.default
 
@@ -45,12 +46,20 @@
     btop
     jq
     eza
-    # adw-gtk-theme
-    # papirus-icon-theme
-    # qt5ct-kde
-    # qt6ct-kde
-    # ttf-jetbrains-mono-nerd
+
+    adw-gtk3
+    papirus-icon-theme
+    libsForQt5.qt5ct
+    kdePackages.qt6ct
     yazi
     thunar
+
+    quickshell
+    aubio
+    libcava
+    swappy
+    libqalculate
+    bash
+    material-symbols
   ];
 }

@@ -23,6 +23,7 @@
     packages = with pkgs; [
       nerd-fonts.fira-code
       nerd-fonts.jetbrains-mono
+      nerd-fonts.caskaydia-cove
       font-awesome
       noto-fonts
       noto-fonts-color-emoji
