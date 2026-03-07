@@ -37,9 +37,5 @@
     # Мониторинг
     htop
     btop
-
-    inputs.caelestia-shell.packages.${system}.default
-
-    kitty
   ];
 }
