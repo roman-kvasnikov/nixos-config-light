@@ -6,6 +6,6 @@
       withUWSM = false;
     };
 
-    hyprlock.enable = true;
+    # hyprlock.enable = true;
   };
 }
