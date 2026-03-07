@@ -14,6 +14,6 @@
     ./time.nix
     ./user.nix
 
-    # ./hyprland
+    ./hyprland
   ];
 }
