@@ -24,6 +24,25 @@
       libnotify # Notification daemon
       pamixer # Volume control
       brightnessctl # Brightness control
+
+      # Additional for Caelestia
+      wl-clipboard
+      cliphist
+      inotify-tools
+      app2unit
+      wireplumber
+      trash-cli
+      foot
+      fish
+      fastfetch
+      starship
+      btop
+      jq
+      eza
+      adw-gtk-theme
+      papirus-icon-theme
+      qt5ct-kde
+      qt6ct-kde
     ];
   };
 }
