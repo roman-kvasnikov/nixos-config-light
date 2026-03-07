@@ -39,8 +39,13 @@
       btop
       jq
       eza
+      # adw-gtk-theme
+      # papirus-icon-theme
       # qt5ct-kde
       # qt6ct-kde
+      # ttf-jetbrains-mono-nerd
+      yazi
+      thunar
     ];
   };
 }
