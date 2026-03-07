@@ -39,5 +39,7 @@
     btop
 
     inputs.caelestia-shell.packages.${system}.default
+
+    kitty
   ];
 }

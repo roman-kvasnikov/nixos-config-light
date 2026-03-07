@@ -6,7 +6,6 @@
     ./fonts.nix
     ./hardware.nix
     ./i18n.nix
-    ./kitty.nix
     ./networking.nix
     ./nix.nix
     ./security.nix
