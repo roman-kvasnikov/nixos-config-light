@@ -7,7 +7,7 @@
 with lib; let
   cfg = config.services.xray;
 in {
-  options.services.xray = {
+  options.services.xrayctl = {
     enable = mkEnableOption "Xray proxy service";
 
     package = mkOption {

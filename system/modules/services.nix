@@ -22,6 +22,6 @@
     geoclue2.enable = true;
 
     # Own Services
-    xray.enable = true;
+    xrayctl.enable = true;
   };
 }
