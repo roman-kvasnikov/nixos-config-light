@@ -21,6 +21,10 @@
 
     geoclue2.enable = true;
 
-    xray.enable = true;
+    xray = {
+      enable = true;
+
+      settingsFile = "/etc/xray/config.json";
+    };
   };
 }
