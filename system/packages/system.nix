@@ -24,5 +24,7 @@
     unzip
     p7zip
     unrar
+
+    samba
   ];
 }
