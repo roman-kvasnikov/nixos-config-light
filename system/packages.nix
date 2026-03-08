@@ -13,7 +13,9 @@
     killall
     lm_sensors # Hardware monitoring
     dig
+    glib
     glibc
+    tree
 
     # SSH утилиты
     ssh-copy-id
@@ -33,5 +35,16 @@
     # Мониторинг
     htop
     btop
+
+    #
+    brave
+    telegram-desktop
+    micro
+
+    # Веб и разработка
+    postman # API тестирование
+    # dbeaver-bin # DB клиент
+    tableplus # DB клиент
+    filezilla # FTP клиент
   ];
 }

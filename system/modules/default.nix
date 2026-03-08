@@ -2,7 +2,6 @@
   imports = [
     ./boot.nix
     ./environment.nix
-    ./fish.nix
     ./fonts.nix
     ./hardware.nix
     ./i18n.nix
@@ -15,5 +14,6 @@
     ./user.nix
 
     ./hyprland
+    ./programs
   ];
 }
