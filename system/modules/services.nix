@@ -20,5 +20,8 @@
     gvfs.enable = true;
 
     geoclue2.enable = true;
+
+    # Own Services
+    xray.enable = true;
   };
 }

@@ -13,5 +13,7 @@
     ./systemd.nix
     ./time.nix
     ./user.nix
+
+    ./xray
   ];
 }
