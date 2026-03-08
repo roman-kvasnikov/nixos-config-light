@@ -9,6 +9,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../system
+    ../../desktop/hyprland
   ];
 
   boot = {
@@ -18,10 +19,10 @@
         efiSysMountPoint = "/boot/efi";
       };
 
-      systemd-boot.enable = false;
+      systemd-boot.enable = true;
 
       grub = {
-        enable = true;
+        enable = false;
         device = "nodev";
         efiSupport = true;
         useOSProber = true;
