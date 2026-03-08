@@ -4,7 +4,9 @@
   };
 
   imports = [
-    ./applications.nix
+    ./apps.nix
+    ./cli.nix
+    ./dev.nix
     ./system.nix
   ];
 }

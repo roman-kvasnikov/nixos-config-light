@@ -5,7 +5,5 @@
 
       wayland.enable = true;
     };
-
-    # hypridle.enable = true;
   };
 }

@@ -1,72 +1,22 @@
 {pkgs, ...}: {
-  # ------------------------------------------------------------
-  # SYSTEM / CORE UTILITIES
-  # Базовые утилиты системы и CLI инструменты
-  # ------------------------------------------------------------
   environment.systemPackages = with pkgs; [
-    # Network / downloads
+    # Network
     curl
     wget
-    dig
-    doggo
-    gping
 
-    # Git
+    # Core
     git
-    gh
-    lazygit
-
-    # Core system
+    openssh
+    rsync
     killall
+
+    # Libraries
     glib
     glibc
-    bash
 
-    # Shell / CLI environment
-    fish
-    starship
-
-    # File tools
-    tree
-    trash-cli
-
-    # JSON / text
-    jq
-    bat
-
-    # CLI replacements
-    eza
-    ripgrep
-    fd
-    dust
-    duf
-    procs
-
-    # Calculators
-    bc
-    calc
-    libqalculate
-
-    # Monitoring
-    htop
-    btop
-    fastfetch
+    # System tools
     lm_sensors
-    iotop
-    nethogs
-
-    # Bench / analysis
-    hyperfine
-    tokei
-
-    # Filesystem / cloud
-    s3fs
-    inotify-tools
-
-    # SSH / sync
-    openssh
-    ssh-copy-id
-    rsync
+    libsecret
 
     # Archives
     gzip
@@ -74,8 +24,5 @@
     unzip
     p7zip
     unrar
-
-    # Security
-    libsecret
   ];
 }

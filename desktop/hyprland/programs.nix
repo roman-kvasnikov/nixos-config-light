@@ -5,7 +5,5 @@
 
       withUWSM = false;
     };
-
-    # hyprlock.enable = true;
   };
 }
