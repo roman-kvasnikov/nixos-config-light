@@ -1,5 +1,5 @@
 {
   imports = [
-    ./hyprland-display-switcher.nix
+    ./hyprland-display-switcher
   ];
 }
