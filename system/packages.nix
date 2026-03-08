@@ -43,9 +43,9 @@
     micro
 
     # Веб и разработка
-    postman # API тестирование
+    # postman # API тестирование
     # dbeaver-bin # DB клиент
-    tableplus # DB клиент
-    filezilla # FTP клиент
+    # tableplus # DB клиент
+    # filezilla # FTP клиент
   ];
 }
