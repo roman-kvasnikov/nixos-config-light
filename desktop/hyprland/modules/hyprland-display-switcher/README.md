@@ -1,4 +1,4 @@
 # Add to hyprland.conf
 
-bindl=,monitoradded,exec,hyprland-display-switcher
-bindl=,monitorremoved,exec,hyprland-display-switcher
+bindl=,monitoraddedv2,exec,hyprland-display-switcher
+bindl=,monitorremovedv2,exec,hyprland-display-switcher
