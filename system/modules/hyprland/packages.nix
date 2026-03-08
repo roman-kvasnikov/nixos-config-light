@@ -3,64 +3,64 @@
   pkgs,
   ...
 }: {
+  # ------------------------------------------------------------
+  # DESKTOP / WAYLAND / HYPRLAND / CAELESTIA
+  # Графическая оболочка и её инструменты
+  # ------------------------------------------------------------
   environment.systemPackages = with pkgs; [
-    # Caelestia Shell
+    # Caelestia
     inputs.quickshell.packages.${system}.default
     inputs.caelestia-shell.packages.${system}.default
     inputs.caelestia-cli.packages.${system}.default
 
-    # Hyprland specific
-    # hyprpaper # Wallpaper manager
-    # hyprpicker # Color picker
-    # hyprlauncher #  App launcher
-    # hypridle # Idle detection
-    # hyprlock # Screen locker
-    # hyprsysteminfo # System info
-    # hyprpolkitagent # Polkit agent
+    # Wayland terminal
+    foot
+
+    # File managers
+    thunar
+
+    # Screenshots
+    swappy
+
+    # Audio system
+    wireplumber
+    aubio
+    libcava
+
+    # System helpers
+    brightnessctl
+    app2unit
+
+    # Themes / UI
+    adw-gtk3
+    papirus-icon-theme
+    material-symbols
+
+    # Qt integration
+    libsForQt5.qt5ct
+    kdePackages.qt6ct
+
+    # Hyprland ecosystem (optional)
+    # hyprpaper
+    # hyprpicker
+    # hyprlauncher
+    # hypridle
+    # hyprlock
+    # hyprsysteminfo
+    # hyprpolkitagent
     # hyprpwcenter
     # hyprshutdown
     # hyprcursor
-    # hyprshot # Screenshot tool
+    # hyprshot
 
-    # Hyprland utilities
-    # waybar # Status bar
-    # wofi # Application launcher
-    # mako # Notification daemon
-    # wlogout # Logout menu
-
-    # System utilities
-    # libnotify # Notification daemon
-    # pamixer # Volume control
-    brightnessctl # Brightness control
-
-    # Additional for Caelestia
+    # Wayland utilities
     wl-clipboard
     cliphist
-    inotify-tools
-    app2unit
-    wireplumber
-    trash-cli
-    foot
-    fish
-    fastfetch
-    starship
-    btop
-    jq
-    eza
 
-    adw-gtk3
-    papirus-icon-theme
-    libsForQt5.qt5ct
-    kdePackages.qt6ct
-    yazi
-    thunar
-
-    quickshell
-    aubio
-    libcava
-    swappy
-    libqalculate
-    bash
-    material-symbols
+    # Bars / launchers / notifications (optional)
+    # waybar
+    # wofi
+    # mako
+    # wlogout
   ];
 }

@@ -1,6 +1,6 @@
 {
   imports = [
-    ./packages.nix
     ./modules
+    ./packages
   ];
 }
