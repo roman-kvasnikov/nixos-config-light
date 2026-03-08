@@ -18,7 +18,7 @@ in {
 
     configFile = mkOption {
       type = types.path;
-      example = "/etc/xray/config.json";
+      default = "/etc/xray/config.json";
       description = "Path to Xray config.json";
     };
   };
