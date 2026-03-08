@@ -31,6 +31,7 @@
 
     # IDE
     code-cursor
+    inputs.alejandra.defaultPackage.${system}
 
     gnome-calculator # Calculator
     gnome-calendar # Calendar
