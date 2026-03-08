@@ -38,6 +38,7 @@
 
     #
     brave
+    code-cursor
     telegram-desktop
     micro
 
