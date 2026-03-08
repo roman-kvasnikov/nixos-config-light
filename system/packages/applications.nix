@@ -35,7 +35,7 @@
     pinta
 
     # Crypto
-    exodus
+    # exodus
 
     # Dev tools (optional)
     # postman
