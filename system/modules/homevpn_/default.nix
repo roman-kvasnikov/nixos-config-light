@@ -5,28 +5,21 @@
   ...
 }:
 with lib; let
-  cfg = config.services.xrayctl;
+  cfg = config.services.homevpnctl;
 in {
-  options.services.xrayctl = {
-    enable = mkEnableOption "Xray proxy service";
-
-    package = mkOption {
-      type = types.package;
-      default = pkgs.xray;
-      description = "Xray package to use.";
-    };
+  options.services.homevpnctl = {
+    enable = mkEnableOption "Home VPN L2TP/IPsec Connection Daemon";
 
     configFile = mkOption {
       type = types.path;
-      default = "/etc/xray/config.json";
-      description = "Path to Xray config.json";
+      default = "/etc/homevpn/config.json";
+      description = "Path to Home VPN L2TP/IPsec config.json";
     };
   };
 
   config = mkIf cfg.enable {
-    systemd.services.xray = {
-      description = "Xray Service";
-      documentation = ["https://xtls.github.io/"];
+    systemd.services.homevpn = {
+      description = "Home VPN L2TP/IPsec Connection Daemon";
 
       after = ["network-online.target" "nss-lookup.target"];
       wants = ["network-online.target"];
@@ -36,7 +29,10 @@ in {
       serviceConfig = {
         Type = "simple";
 
+        ExecStart = "/usr/local/bin/homevpnctl daemon";
+        ExecStop = "/usr/local/bin/homevpnctl clean";
         ExecStart = "${cfg.package}/bin/xray run -config ${cfg.configFile}";
+        ExecStart = "${homevpnctl}/bin/homevpnctl daemon";
 
         # Динамический пользователь
         DynamicUser = true;
