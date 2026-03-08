@@ -31,5 +31,12 @@
 
     # IDE
     code-cursor
+
+    gnome-calculator # Calculator
+    gnome-calendar # Calendar
+    loupe # Image viewer
+    decibels # Audio player
+    gedit # Text editor
+    imagemagick # Image processing
   ];
 }

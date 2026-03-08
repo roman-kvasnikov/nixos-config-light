@@ -17,7 +17,8 @@
     foot
 
     # File managers
-    thunar
+    # thunar
+    nautilus
 
     # Screenshots
     swappy
@@ -37,8 +38,10 @@
     material-symbols
 
     # Qt integration
-    libsForQt5.qt5ct
-    kdePackages.qt6ct
+    # libsForQt5.qt5ct
+    # kdePackages.qt6ct
+    qt5.qtwayland
+    qt6.qtwayland
 
     # Hyprland ecosystem (optional)
     # hyprpaper
