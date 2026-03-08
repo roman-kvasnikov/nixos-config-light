@@ -1,9 +1,10 @@
-{
-  inputs,
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   environment.systemPackages = with pkgs; [
+    # Caelestia Shell
+    inputs.quickshell.packages.${system}.default
+    inputs.caelestia-shell.packages.${system}.default
+    inputs.caelestia-cli.packages.${system}.default
+
     # Hyprland specific
     # hyprpaper # Wallpaper manager
     # hyprpicker # Color picker
@@ -27,10 +28,6 @@
     # libnotify # Notification daemon
     # pamixer # Volume control
     brightnessctl # Brightness control
-
-    inputs.quickshell.packages.${system}.default
-    inputs.caelestia-shell.packages.${system}.default
-    inputs.caelestia-cli.packages.${system}.default
 
     # Additional for Caelestia
     wl-clipboard
