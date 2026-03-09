@@ -43,12 +43,12 @@
 
     # Hyprland ecosystem (optional)
     # hyprpaper
-    # hyprpicker
+    hyprpicker
     # hyprlauncher
     # hypridle
     # hyprlock
     # hyprsysteminfo
-    # hyprpolkitagent
+    hyprpolkitagent
     # hyprpwcenter
     # hyprshutdown
     # hyprcursor

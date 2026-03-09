@@ -43,5 +43,7 @@
     s3fs
     inotify-tools
     trash-cli
+
+    gnupg
   ];
 }

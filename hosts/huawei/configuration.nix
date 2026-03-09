@@ -19,10 +19,10 @@
         efiSysMountPoint = "/boot/efi";
       };
 
-      systemd-boot.enable = true;
+      systemd-boot.enable = false;
 
       grub = {
-        enable = false;
+        enable = true;
         device = "nodev";
         efiSupport = true;
         useOSProber = true;
@@ -65,6 +65,14 @@
         CPU_SCALING_GOVERNOR_ON_AC = "performance";
         CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
       };
+    };
+
+    hyprland-display-switcher = {
+      enable = true;
+
+      builtinMonitor = "eDP-1, 3120x2080@90.00, auto, 1.6";
+      externalMonitor = "DP-3, 2560x1440@165.00, auto, 1";
+      fallbackMonitor = ", preferred, auto, 1";
     };
   };
 

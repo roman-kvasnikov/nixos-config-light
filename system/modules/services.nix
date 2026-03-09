@@ -5,6 +5,8 @@
   ...
 }: {
   services = {
+    gnome.gnome-keyring.enable = true;
+
     pipewire = {
       enable = true;
 
@@ -19,7 +21,14 @@
 
     gvfs.enable = true;
 
-    geoclue2.enable = true;
+    geoclue2 = {
+      enable = true;
+
+      appConfig.gammastep = {
+        isAllowed = true;
+        isSystem = false;
+      };
+    };
 
     xray = {
       enable = true;

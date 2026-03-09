@@ -1,7 +1,7 @@
 {
   environment = {
     sessionVariables = {
-      #
+      EDITOR = "micro";
     };
   };
 }

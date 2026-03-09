@@ -1,24 +1,23 @@
-{pkgs, ...}: {
-  environment.systemPackages = [
-    (pkgs.writeShellScriptBin "hyprland-display-switcher" ''
-      #!/usr/bin/env bash
-      set -euo pipefail
-
-      sleep 0.5
-
-      MONITORS=$(hyprctl monitors all -j)
-
-      INTERNAL=$(echo "$MONITORS" | ${pkgs.jq}/bin/jq -r '.[] | select(.name | test("^eDP")) | .name')
-      EXTERNAL=$(echo "$MONITORS" | ${pkgs.jq}/bin/jq -r '.[] | select(.name | test("^eDP") | not) | .name')
-
-      if [ -n "$EXTERNAL" ]; then
-          PRIMARY=$(echo "$EXTERNAL" | head -n1)
-
-          hyprctl keyword monitor "$PRIMARY,preferred,auto,1"
-          hyprctl keyword monitor "$INTERNAL,disable"
-      else
-          hyprctl keyword monitor "$INTERNAL,preferred,auto,1"
-      fi
-    '')
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}: let
+  hyprlandDisplaySwitcherConfig = config.services.hyprland-display-switcher;
+  hyprlandDisplaySwitcher = pkgs.callPackage ./package/package.nix {inherit hyprlandDisplaySwitcherConfig config pkgs;};
+in {
+  imports = [
+    ./options.nix
+    ./service.nix
   ];
+
+  config = lib.mkIf hyprlandDisplaySwitcherConfig.enable {
+    home.packages = [
+      hyprlandDisplaySwitcher
+      pkgs.coreutils
+      pkgs.gnugrep
+      pkgs.hyprland
+    ];
+  };
 }
