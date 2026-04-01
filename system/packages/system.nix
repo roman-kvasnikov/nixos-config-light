@@ -26,5 +26,6 @@
     unrar
 
     samba
+    wakeonlan
   ];
 }

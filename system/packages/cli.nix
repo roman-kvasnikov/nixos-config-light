@@ -45,5 +45,7 @@
     trash-cli
 
     gnupg
+    pass
+    pinentry-bemenu
   ];
 }
