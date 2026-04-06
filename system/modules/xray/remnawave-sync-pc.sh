@@ -23,11 +23,11 @@ set -euo pipefail
 SUB_URL="https://rw-subscription.kvasok.xyz/LtK5tt9LfzVfHLPC"
 
 # User-Agent that matches your Response Rule for the PC/Default template
-USER_AGENT="RemnaSyncPC/1.0"
+USER_AGENT="NotebookXray/1.0"
 
 # Node address to select from the subscription array
 # Must match the address in the outbound's vnext[].address
-NODE_FILTER="node-estonia-01.be-free.online"
+NODE_FILTER="node-netherlands-01.be-free.online"
 
 # Path to the Xray config file
 XRAY_CONFIG="/etc/xray/config.json"
