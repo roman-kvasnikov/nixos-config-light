@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# remnawave-sync-pc.sh
+# remnawave-sync.sh
 #
 # Fetches Xray JSON configs from a Remnawave subscription,
 # picks the one matching NODE_FILTER, and writes it to config.json.
@@ -10,7 +10,7 @@
 # server address against NODE_FILTER.
 #
 # Cron example (daily at 05:00):
-#   0 5 * * * /usr/local/bin/remnawave-sync-pc.sh >> /var/log/remnawave-sync-pc.log 2>&1
+#   0 5 * * * /usr/local/bin/remnawave-sync.sh >> /var/log/remnawave-sync.log 2>&1
 #
 
 set -euo pipefail
@@ -22,7 +22,7 @@ set -euo pipefail
 # Remnawave subscription URL
 SUB_URL="https://rw-subscription.kvasok.xyz/LtK5tt9LfzVfHLPC"
 
-# User-Agent that matches your Response Rule for the PC/Default template
+# User-Agent that matches your Response Rule for the Default template
 USER_AGENT="NotebookXray/1.0"
 
 # Node address to select from the subscription array

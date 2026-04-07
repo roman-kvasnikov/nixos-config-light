@@ -54,5 +54,17 @@ in {
         WantedBy = ["hyprland-session.target"];
       };
     };
+
+    wayland.windowManager.hyprland.settings = {
+      monitor = [
+        "${hyprlandDisplaySwitcherConfig.builtinMonitor}"
+        "${hyprlandDisplaySwitcherConfig.externalMonitor}"
+        "${hyprlandDisplaySwitcherConfig.fallbackMonitor}"
+      ];
+
+      exec-once = [
+        "${hyprlandDisplaySwitcher}/bin/hyprland-display-switcher"
+      ];
+    };
   };
 }

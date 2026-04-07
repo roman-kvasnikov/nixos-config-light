@@ -90,7 +90,7 @@ check_dependencies() {
 
 # Функция для подсчета подключенных мониторов
 count_monitors() {
-	hyprctl monitors all 2>/dev/null | grep -c "^Monitor" || true
+	hyprctl monitors all | grep -c "^Monitor"
 }
 
 # Функция для извлечения имени монитора
@@ -129,7 +129,7 @@ main() {
 check_user
 check_dependencies
 
-sleep 1
+sleep 2
 
 # Запуск основной логики
 main "$@"

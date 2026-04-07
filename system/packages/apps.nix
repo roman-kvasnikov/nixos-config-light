@@ -45,12 +45,5 @@
     imagemagick # Image processing
 
     obs-studio
-
-    bitwarden-desktop
-    bitwarden-cli
-    bitwarden-menu
-    bitwarden-directory-connector
-    bitwarden-directory-connector-cli
-    # bws
   ];
 }

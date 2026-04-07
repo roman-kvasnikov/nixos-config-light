@@ -1,11 +1,10 @@
 {pkgs, ...}: let
-  remnawave-sync-pc = pkgs.writeShellScriptBin "remnawave-sync-pc" (
-    builtins.readFile ./remnawave-sync-pc.sh
+  remnawave-sync = pkgs.writeShellScriptBin "remnawave-sync" (
+    builtins.readFile ./remnawave-sync.sh
   );
-in
-{
+in {
   services.xray = {
-    enable = true;
+    enable = false;
 
     settingsFile = "/etc/xray/config.json";
   };
@@ -13,19 +12,19 @@ in
   environment.systemPackages = with pkgs; [
     jq
     curl
-    remnawave-sync-pc
+    remnawave-sync
   ];
 
   systemd = {
     services = {
-      remnawave-sync-pc = {
+      remnawave-sync = {
         description = "Sync Xray config from Remnawave";
-        path = with pkgs; [ curl jq coreutils ];
+        path = with pkgs; [curl jq coreutils];
         serviceConfig = {
           Type = "oneshot";
-          ExecStart = "${remnawave-sync-pc}/bin/remnawave-sync-pc";
-          StandardOutput = "append:/var/log/remnawave-sync-pc.log";
-          StandardError = "append:/var/log/remnawave-sync-pc.log";
+          ExecStart = "${remnawave-sync}/bin/remnawave-sync";
+          StandardOutput = "append:/var/log/remnawave-sync.log";
+          StandardError = "append:/var/log/remnawave-sync.log";
         };
       };
 
@@ -34,9 +33,9 @@ in
       };
     };
 
-    timers.remnawave-sync-pc = {
+    timers.remnawave-sync = {
       description = "Daily Remnawave config sync";
-      wantedBy = [ "timers.target" ];
+      wantedBy = ["timers.target"];
       timerConfig = {
         OnCalendar = "*-*-* 05:00:00";
         Persistent = true;
