@@ -8,10 +8,10 @@
       # fallbackMonitor = ", preferred, auto, 1";
     };
 
-    xrayctl = {
+    xray = {
       enable = true;
 
-      configFile = "${config.home.homeDirectory}/.config/xray/config.json";
+      # configFile = "${config.home.homeDirectory}/.config/xray/config.json";
     };
   };
 }
