@@ -25,27 +25,27 @@ readonly NC='\033[0m' # No Color
 # УТИЛИТЫ ДЛЯ ВЫВОДА
 # =============================================================================
 
-print_success() {
+success() {
     echo -e "${GREEN}[✓]${NC} $1"
 }
 
-print_info() {
+info() {
     echo -e "${BLUE}[i]${NC} $1"
 }
 
-print_warning() {
+warning() {
     echo -e "${YELLOW}[!]${NC} $1"
 }
 
-print_error() {
+error() {
     echo -e "${RED}[✗]${NC} $1" >&2
 }
 
-print_header() {
+header() {
     echo -e "${PURPLE}$1${NC}"
 }
 
-print_status() {
+status() {
     echo -e "${CYAN}$1${NC}"
 }
 
@@ -56,7 +56,7 @@ print_status() {
 # Проверить, что скрипт запущен не от root
 check_user() {
     if [ "$(id -u)" -eq 0 ]; then
-        print_error "This script should not be run as root"
+        error "This script should not be run as root"
         exit 1
     fi
 }
@@ -78,8 +78,8 @@ check_dependencies() {
     fi
 
     if [ ${#missing_deps[@]} -gt 0 ]; then
-        print_error "Missing required dependencies: ${missing_deps[*]}"
-        print_error "Make sure hyprctl, grep, cut are installed"
+        error "Missing required dependencies: ${missing_deps[*]}"
+        error "Make sure hyprctl, grep, cut are installed"
         exit 1
     fi
 }
@@ -103,21 +103,21 @@ monitor_name() {
 # =============================================================================
 
 main() {
-	print_info "Checking monitor configuration..."
+	info "Checking monitor configuration..."
 
 	local total_monitors=$(count_monitors)
-	print_info "Total connected monitors: $total_monitors"
+	info "Total connected monitors: $total_monitors"
 
 	if [ "$total_monitors" -gt 1 ]; then
 		# Если есть внешние мониторы - всегда отключаем встроенный
-		print_info "External monitor detected, ensuring built-in is disabled"
+		info "External monitor detected, ensuring built-in is disabled"
 		hyprctl keyword monitor "$(monitor_name "$BUILTIN_MONITOR"), disable"
-		print_success "Built-in monitor disabled"
+		success "Built-in monitor disabled"
 	else
 		# Если только встроенный - всегда включаем
-		print_info "Only built-in monitor detected, ensuring it's enabled"
+		info "Only built-in monitor detected, ensuring it's enabled"
 		hyprctl keyword monitor "$BUILTIN_MONITOR"
-		print_success "Built-in monitor enabled"
+		success "Built-in monitor enabled"
 	fi
 }
 
@@ -129,7 +129,7 @@ main() {
 check_user
 check_dependencies
 
-sleep 2
+sleep 1
 
 # Запуск основной логики
 main "$@"

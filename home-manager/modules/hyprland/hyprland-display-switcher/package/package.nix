@@ -1,5 +1,5 @@
 {
-  hyprlandDisplaySwitcherConfig,
+  cfg,
   pkgs,
   ...
 }:
@@ -10,7 +10,7 @@ pkgs.writeShellScriptBin "hyprland-display-switcher"
     "@builtinMonitor@"
   ]
   [
-    hyprlandDisplaySwitcherConfig.builtinMonitor
+    cfg.builtinMonitor
   ]
   (builtins.readFile ./source.sh)
 )

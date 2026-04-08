@@ -1,8 +1,4 @@
-{
-  lib,
-  config,
-  ...
-}: {
+{lib, ...}: {
   options.services.hyprland-display-switcher = {
     enable = lib.mkEnableOption "Hyprland Display Switcher";
 
@@ -20,7 +16,7 @@
 
     fallbackMonitor = lib.mkOption {
       type = lib.types.str;
-      default = ", preferred, auto, 1";
+      default = ", preferred, auto, 1.6";
       description = "Fallback monitor";
     };
   };

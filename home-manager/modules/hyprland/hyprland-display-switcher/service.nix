@@ -4,10 +4,10 @@
   pkgs,
   ...
 }: let
-  hyprlandDisplaySwitcherConfig = config.services.hyprland-display-switcher;
-  hyprlandDisplaySwitcher = pkgs.callPackage ./package/package.nix {inherit hyprlandDisplaySwitcherConfig config pkgs;};
+  cfg = config.services.hyprland-display-switcher;
+  hyprland-display-switcher = pkgs.callPackage ./package/package.nix {inherit cfg pkgs;};
 in {
-  config = lib.mkIf hyprlandDisplaySwitcherConfig.enable {
+  config = lib.mkIf cfg.enable {
     systemd.user.paths.hyprland-display-switcher = {
       Unit = {
         Description = "Monitor for display changes";
@@ -39,7 +39,6 @@ in {
 
       Service = {
         Type = "oneshot";
-        ExecStart = "${hyprlandDisplaySwitcher}/bin/hyprland-display-switcher";
 
         Environment = [
           "PATH=${lib.makeBinPath [
@@ -48,23 +47,13 @@ in {
             pkgs.hyprland
           ]}"
         ];
+
+        ExecStart = "${hyprland-display-switcher}/bin/hyprland-display-switcher";
       };
 
       Install = {
         WantedBy = ["hyprland-session.target"];
       };
-    };
-
-    wayland.windowManager.hyprland.settings = {
-      monitor = [
-        "${hyprlandDisplaySwitcherConfig.builtinMonitor}"
-        "${hyprlandDisplaySwitcherConfig.externalMonitor}"
-        "${hyprlandDisplaySwitcherConfig.fallbackMonitor}"
-      ];
-
-      exec-once = [
-        "${hyprlandDisplaySwitcher}/bin/hyprland-display-switcher"
-      ];
     };
   };
 }
