@@ -1,5 +1,6 @@
 {
   imports = [
-    ./hyprland
+    ./hyprland-display-switcher
+    ./xray
   ];
 }

@@ -27,13 +27,13 @@ USER_AGENT="NotebookXray/1.0"
 
 # Node address to select from the subscription array
 # Must match the address in the outbound's vnext[].address
-NODE_FILTER="node-netherlands-01.be-free.online"
+NODE_FILTER="ee.be-free.online"
 
 # Path to the Xray config file
-XRAY_CONFIG="/etc/xray/config.json"
+XRAY_CONFIG="${HOME}/.config/xray/config.json"
 
 # Command to restart Xray
-XRAY_RESTART_CMD="systemctl restart xray.service"
+XRAY_RESTART_CMD="systemctl --user restart xray.service"
 
 # ============================================================
 

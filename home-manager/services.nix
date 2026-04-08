@@ -6,4 +6,8 @@
     # externalMonitor = "DP-3, 2560x1440@165.00, auto, 1";
     # fallbackMonitor = ", preferred, auto, 1";
   };
+
+  services.xray = {
+    enable = true;
+  };
 }
