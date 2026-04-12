@@ -45,5 +45,7 @@
     imagemagick # Image processing
 
     obs-studio
+
+    auto-cpufreq
   ];
 }

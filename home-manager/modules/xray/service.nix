@@ -5,7 +5,7 @@
   ...
 }: let
   cfg = config.services.xray;
-  remnawave-sync = pkgs.callPackage ./package/remnawave-sync.nix {inherit cfg pkgs;};
+  # remnawave-sync = pkgs.callPackage ./package/remnawave-sync.nix {inherit cfg pkgs;};
 in {
   config = lib.mkIf cfg.enable {
     systemd.user.services.xray = {
@@ -51,50 +51,50 @@ in {
       };
     };
 
-    systemd.user.services.remnawave-sync = {
-      Unit = {
-        Description = "Sync Xray config from Remnawave Panel";
+    # systemd.user.services.remnawave-sync = {
+    #   Unit = {
+    #     Description = "Sync Xray config from Remnawave Panel";
 
-        After = ["graphical-session.target"];
-        PartOf = ["graphical-session.target"];
-        Requires = ["graphical-session.target"];
-      };
+    #     After = ["graphical-session.target"];
+    #     PartOf = ["graphical-session.target"];
+    #     Requires = ["graphical-session.target"];
+    #   };
 
-      Service = {
-        Type = "oneshot";
+    #   Service = {
+    #     Type = "oneshot";
 
-        Environment = [
-          "PATH=${lib.makeBinPath [
-            pkgs.coreutils
-            pkgs.curl
-            pkgs.jq
-          ]}"
-        ];
+    #     Environment = [
+    #       "PATH=${lib.makeBinPath [
+    #         pkgs.coreutils
+    #         pkgs.curl
+    #         pkgs.jq
+    #       ]}"
+    #     ];
 
-        ExecStart = "${remnawave-sync}/bin/remnawave-sync";
+    #     ExecStart = "${remnawave-sync}/bin/remnawave-sync";
 
-        StandardOutput = "journal";
-        StandardError = "journal";
-      };
+    #     StandardOutput = "journal";
+    #     StandardError = "journal";
+    #   };
 
-      Install = {
-        WantedBy = ["default.target"];
-      };
-    };
+    #   Install = {
+    #     WantedBy = ["default.target"];
+    #   };
+    # };
 
-    systemd.user.timers.remnawave-sync = {
-      Unit = {
-        Description = "Daily Remnawave Panel config sync";
-      };
+    # systemd.user.timers.remnawave-sync = {
+    #   Unit = {
+    #     Description = "Daily Remnawave Panel config sync";
+    #   };
 
-      Timer = {
-        OnCalendar = "*-*-* 05:00:00";
-        Persistent = true;
-      };
+    #   Timer = {
+    #     OnCalendar = "*-*-* 05:00:00";
+    #     Persistent = true;
+    #   };
 
-      Install = {
-        WantedBy = ["timers.target"];
-      };
-    };
+    #   Install = {
+    #     WantedBy = ["timers.target"];
+    #   };
+    # };
   };
 }
