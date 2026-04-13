@@ -17,7 +17,7 @@
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
-      ExecStart = "${pkgs.bash}/bin/bash -c 'echo 15000000 > /sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw'";
+      ExecStart = "${pkgs.bash}/bin/bash -c 'echo 20000000 > /sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw'";
     };
     wantedBy = ["multi-user.target"];
   };

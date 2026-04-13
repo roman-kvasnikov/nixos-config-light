@@ -20,6 +20,8 @@
     lm_sensors
     libsecret
 
+    ddcutil
+
     # Archives
     gzip
     zip
