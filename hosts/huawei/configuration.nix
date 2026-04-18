@@ -52,20 +52,51 @@
       };
     };
 
-    # Энергосбережение ноутбука
-    power-profiles-daemon.enable = false;
+    # Устанавливает undervolt для CPU. (Не работает на Huawei MateBook X Pro)
+    # undervolt = {
+    #   enable = true;
+    #   coreOffset = -50;
+    #   gpuOffset = -30;
+    #   uncoreOffset = -50;
+    # };
+
+    # https://wiki.nixos.org/wiki/Laptop
 
     tlp = {
       enable = true;
 
       settings = {
-        START_CHARGE_THRESH_BAT0 = 60;
-        STOP_CHARGE_THRESH_BAT0 = 70;
-
         CPU_SCALING_GOVERNOR_ON_AC = "performance";
         CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+
+        CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
+        CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
+
+        CPU_MIN_PERF_ON_AC = 0;
+        CPU_MAX_PERF_ON_AC = 100;
+        CPU_MIN_PERF_ON_BAT = 0;
+        CPU_MAX_PERF_ON_BAT = 40;
+
+        # Optional helps save long term battery health
+        START_CHARGE_THRESH_BAT0 = 40; # 40 and below it starts to charge
+        STOP_CHARGE_THRESH_BAT0 = 80; # 80 and above it stops charging
       };
     };
+
+    # Демон от Intel, который мониторит температуру в реальном времени и динамически снижает частоты/power limit когда процессор перегревается.
+    thermald.enable = true;
+  };
+
+  # Устанавливает power limit для CPU.
+  systemd.services.powerlimit = {
+    description = "Set CPU power limits";
+    after = ["multi-user.target"];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = "${pkgs.bash}/bin/bash -c 'echo 20000000 > /sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw'";
+    };
+    wantedBy = ["multi-user.target"];
   };
 
   system.stateVersion = version;

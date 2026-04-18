@@ -1,7 +1,6 @@
 {
   imports = [
     ./boot.nix
-    ./cpu_power_limits.nix
     ./environment.nix
     ./fish.nix
     ./fonts.nix
