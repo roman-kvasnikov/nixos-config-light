@@ -9,9 +9,9 @@
   # ------------------------------------------------------------
   environment.systemPackages = with pkgs; [
     # Caelestia
-    inputs.quickshell.packages.${system}.default
-    inputs.caelestia-shell.packages.${system}.default
-    inputs.caelestia-cli.packages.${system}.default
+    inputs.quickshell.packages.${pkgs.system}.default
+    inputs.caelestia-shell.packages.${pkgs.system}.default
+    inputs.caelestia-cli.packages.${pkgs.system}.default
 
     # Wayland terminal
     foot
