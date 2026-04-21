@@ -75,7 +75,7 @@
         CPU_MIN_PERF_ON_AC = 0;
         CPU_MAX_PERF_ON_AC = 100;
         CPU_MIN_PERF_ON_BAT = 0;
-        CPU_MAX_PERF_ON_BAT = 40;
+        CPU_MAX_PERF_ON_BAT = 50;
 
         # Optional helps save long term battery health
         START_CHARGE_THRESH_BAT0 = 40; # 40 and below it starts to charge
@@ -88,16 +88,25 @@
   };
 
   # Устанавливает power limit для CPU.
-  systemd.services.powerlimit = {
-    description = "Set CPU power limits";
-    after = ["multi-user.target"];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      ExecStart = "${pkgs.bash}/bin/bash -c 'echo 20000000 > /sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw'";
-    };
-    wantedBy = ["multi-user.target"];
-  };
+  # systemd.services.powerlimit = {
+  #   description = "Set Intel RAPL package power limit";
+
+  #   wantedBy = ["multi-user.target" "post-resume.target"];
+  #   after = ["multi-user.target" "post-resume.target"];
+
+  #   unitConfig = {
+  #     ConditionPathExists = "/sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw";
+  #   };
+
+  #   serviceConfig = {
+  #     Type = "oneshot";
+  #     RemainAfterExit = true;
+  #   };
+
+  #   script = ''
+  #     echo 20000000 > /sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw
+  #   '';
+  # };
 
   system.stateVersion = version;
 }

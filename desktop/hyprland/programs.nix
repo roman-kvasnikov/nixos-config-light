@@ -5,5 +5,9 @@
 
       withUWSM = false;
     };
+
+    uwsm = {
+      enable = false;
+    };
   };
 }

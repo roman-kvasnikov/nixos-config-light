@@ -5,7 +5,7 @@
   ...
 }: let
   cfg = config.services.xray;
-  # remnawave-sync = pkgs.callPackage ./package/remnawave-sync.nix {inherit cfg pkgs;};
+  remnawave-sync = pkgs.callPackage ./package/remnawave-sync.nix {inherit pkgs cfg;};
 in {
   config = lib.mkIf cfg.enable {
     systemd.user.services.xray = {
@@ -20,6 +20,13 @@ in {
       Service = {
         Type = "simple";
 
+        WorkingDirectory = cfg.workingDirectory;
+
+        Environment = [
+          "XRAY_LOCATION_ASSET=${cfg.workingDirectory}"
+        ];
+
+        # ExecStartPre = "${remnawave-sync}/bin/remnawave-sync";
         ExecStart = "${pkgs.xray}/bin/xray run -config ${cfg.configFile}";
         ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
 
@@ -42,7 +49,7 @@ in {
         ProtectSystem = "strict";
         ProtectHome = "read-only";
         ReadWritePaths = [
-          "${config.xdg.configHome}/xray"
+          cfg.workingDirectory
         ];
       };
 
@@ -55,9 +62,8 @@ in {
     #   Unit = {
     #     Description = "Sync Xray config from Remnawave Panel";
 
-    #     After = ["graphical-session.target"];
-    #     PartOf = ["graphical-session.target"];
-    #     Requires = ["graphical-session.target"];
+    #     After = ["network-online.target" "nss-lookup.target"];
+    #     Wants = ["network-online.target" "nss-lookup.target"];
     #   };
 
     #   Service = {
@@ -84,7 +90,7 @@ in {
 
     # systemd.user.timers.remnawave-sync = {
     #   Unit = {
-    #     Description = "Daily Remnawave Panel config sync";
+    #     Description = "Sync Xray config from Remnawave Panel";
     #   };
 
     #   Timer = {

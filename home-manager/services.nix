@@ -11,7 +11,8 @@
     xray = {
       enable = true;
 
-      # configFile = "${config.home.homeDirectory}/.config/xray/config.json";
+      # workingDirectory = "${config.xdg.configHome}/xray";
+      # configFile = "${config.xdg.configHome}/xray/config.json";
     };
   };
 }

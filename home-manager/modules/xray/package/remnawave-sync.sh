@@ -26,7 +26,7 @@ set -euo pipefail
 # ============================================================
 
 # Remnawave subscription URL
-SUB_URL="https://rw-subscription.kvasok.xyz/LtK5tt9LfzVfHLPC"
+SUB_URL="https://sub.be-free.online/LtK5tt9LfzVfHLPC"
 
 # User-Agent that matches your Response Rule for the Default template
 USER_AGENT="NotebookXray/1.0"
@@ -35,8 +35,9 @@ USER_AGENT="NotebookXray/1.0"
 NODE_ADDRESS="ee.be-free.online"
 NODE_PORT=443
 
-# Path to the Xray config file
-XRAY_CONFIG="${HOME}/.config/xray/config.json"
+# Paths
+XRAY_CONFIG_DIR="@workingDirectory@"
+XRAY_CONFIG_FILE="@configFile@"
 
 # Command to restart Xray
 XRAY_RESTART_CMD="systemctl --user restart xray.service"
@@ -60,7 +61,7 @@ fi
 
 # --- 2. Validate JSON ---
 
-TMPFILE=$(mktemp "${XRAY_CONFIG}.tmp.XXXXXX")
+TMPFILE=$(mktemp "${XRAY_CONFIG_FILE}.tmp.XXXXXX")
 trap 'rm -f "${TMPFILE}" "${TMPFILE}.filtered" "${TMPFILE}.cleaned" "${TMPFILE}.normalized" 2>/dev/null' EXIT
 
 if ! echo "${BODY}" | jq '.' > "${TMPFILE}" 2>/dev/null; then
@@ -192,14 +193,35 @@ if [[ $(jq '[.outbounds[].tag] | index("proxy") != null' "${TMPFILE}") != "true"
     exit 1
 fi
 
-# --- 6. Compare with current config ---
+# --- 6. Update GeoIP and Geosite ---
+
+log "Updating GeoIP and Geosite..."
+
+if curl -fL -o "$XRAY_CONFIG_DIR/geoip.dat.new" \
+     https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat && \
+   curl -fL -o "$XRAY_CONFIG_DIR/geosite.dat.new" \
+     https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat; then
+
+  # All files downloaded — make atomic replacement
+  mv "$XRAY_CONFIG_DIR/geoip.dat.new" "$XRAY_CONFIG_DIR/geoip.dat"
+  mv "$XRAY_CONFIG_DIR/geosite.dat.new" "$XRAY_CONFIG_DIR/geosite.dat"
+
+  log "GeoIP and Geosite updated successfully"
+else
+  # Something went wrong — clean temporary files
+  rm -f "$XRAY_CONFIG_DIR"/*.new
+  log "ERROR: failed to update GeoIP and Geosite"
+  exit 1
+fi
+
+# --- 7. Compare with current config ---
 
 # Write pretty-printed config for install (preserve original key order)
 jq '.' "${TMPFILE}" > "${TMPFILE}.normalized"
 
-if [[ -f "${XRAY_CONFIG}" ]]; then
+if [[ -f "${XRAY_CONFIG_FILE}" ]]; then
     # Compare ignoring shortId (Remnawave randomizes it on every subscription fetch)
-    OLD_HASH=$(jq -cS 'walk(if type == "object" then del(.shortId) else . end)' "${XRAY_CONFIG}" 2>/dev/null | md5sum | cut -d' ' -f1)
+    OLD_HASH=$(jq -cS 'walk(if type == "object" then del(.shortId) else . end)' "${XRAY_CONFIG_FILE}" 2>/dev/null | md5sum | cut -d' ' -f1)
     NEW_HASH=$(jq -cS 'walk(if type == "object" then del(.shortId) else . end)' "${TMPFILE}.normalized" | md5sum | cut -d' ' -f1)
 
     if [[ "${OLD_HASH}" == "${NEW_HASH}" ]]; then
@@ -208,27 +230,27 @@ if [[ -f "${XRAY_CONFIG}" ]]; then
     fi
     log "Changes detected (old=${OLD_HASH} new=${NEW_HASH})"
     log "--- DIFF START ---"
-    diff <(jq -S '.' "${XRAY_CONFIG}") <(jq -S '.' "${TMPFILE}.normalized") || true
+    diff <(jq -S '.' "${XRAY_CONFIG_FILE}") <(jq -S '.' "${TMPFILE}.normalized") || true
     log "--- DIFF END ---"
 fi
 
-# --- 7. Atomic replace + restart ---
+# --- 8. Atomic replace + restart ---
 
-if [[ -f "${XRAY_CONFIG}" ]]; then
-    cp "${XRAY_CONFIG}" "${XRAY_CONFIG}.bak"
+if [[ -f "${XRAY_CONFIG_FILE}" ]]; then
+    cp "${XRAY_CONFIG_FILE}" "${XRAY_CONFIG_FILE}.bak"
 fi
 
 trap - EXIT
-mv "${TMPFILE}.normalized" "${XRAY_CONFIG}"
+mv "${TMPFILE}.normalized" "${XRAY_CONFIG_FILE}"
 rm -f "${TMPFILE}" "${TMPFILE}.filtered" "${TMPFILE}.cleaned" 2>/dev/null
-log "Config written: ${XRAY_CONFIG}"
+log "Config written: ${XRAY_CONFIG_FILE}"
 
 log "Restarting Xray..."
 if eval "${XRAY_RESTART_CMD}"; then
     log "=== Done: proxy (${NODE_ADDRESS}:${NODE_PORT}, was ${TARGET_TAG}) — ${OB_COUNT} outbounds ==="
 else
     log "ERROR: restart failed, rolling back"
-    [[ -f "${XRAY_CONFIG}.bak" ]] && mv "${XRAY_CONFIG}.bak" "${XRAY_CONFIG}"
+    [[ -f "${XRAY_CONFIG_FILE}.bak" ]] && mv "${XRAY_CONFIG_FILE}.bak" "${XRAY_CONFIG_FILE}"
     eval "${XRAY_RESTART_CMD}" || true
     exit 1
 fi

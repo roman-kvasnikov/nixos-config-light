@@ -7,7 +7,7 @@
       execWheelOnly = true; # Только wheel может использовать sudo
     };
 
-    apparmor.enable = true;
+    apparmor.enable = false; # TODO: Enable later. Сейчас не билдится из за ошибки в nixpkgs.
 
     rtkit.enable = true;
 
