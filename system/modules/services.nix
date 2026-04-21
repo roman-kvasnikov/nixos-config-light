@@ -29,5 +29,7 @@
         isSystem = false;
       };
     };
+
+    upower.enable = true;
   };
 }
