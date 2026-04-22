@@ -15,6 +15,7 @@
 
     # Media
     vlc
+    mpv
     yt-dlp
     cassette
 
@@ -38,6 +39,7 @@
     inputs.alejandra.defaultPackage.${pkgs.system}
 
     gnome-calculator # Calculator
+    qalculate-gtk # Calculator
     gnome-calendar # Calendar
     loupe # Image viewer
     decibels # Audio player

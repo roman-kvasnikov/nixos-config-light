@@ -88,25 +88,25 @@
   };
 
   # Устанавливает power limit для CPU.
-  # systemd.services.powerlimit = {
-  #   description = "Set Intel RAPL package power limit";
+  systemd.services.powerlimit = {
+    description = "Set Intel RAPL package power limit";
 
-  #   wantedBy = ["multi-user.target" "post-resume.target"];
-  #   after = ["multi-user.target" "post-resume.target"];
+    wantedBy = ["multi-user.target" "post-resume.target"];
+    after = ["multi-user.target" "post-resume.target"];
 
-  #   unitConfig = {
-  #     ConditionPathExists = "/sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw";
-  #   };
+    unitConfig = {
+      ConditionPathExists = "/sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw";
+    };
 
-  #   serviceConfig = {
-  #     Type = "oneshot";
-  #     RemainAfterExit = true;
-  #   };
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
 
-  #   script = ''
-  #     echo 20000000 > /sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw
-  #   '';
-  # };
+    script = ''
+      echo 20000000 > /sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw
+    '';
+  };
 
   system.stateVersion = version;
 }
