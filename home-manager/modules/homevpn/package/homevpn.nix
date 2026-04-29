@@ -1,10 +1,10 @@
 {
-  homevpnctlConfig,
-  config,
   pkgs,
+  cfg,
+  config,
   ...
 }:
-pkgs.writeShellScriptBin "homevpnctl"
+pkgs.writeShellScriptBin "homevpn"
 (
   builtins.replaceStrings
   [
@@ -13,7 +13,7 @@ pkgs.writeShellScriptBin "homevpnctl"
   ]
   [
     "${config.xdg.configHome}/homevpn"
-    homevpnctlConfig.configFile
+    cfg.configFile
   ]
-  (builtins.readFile ./source.sh)
+  (builtins.readFile ./homevpn.sh)
 )

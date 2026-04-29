@@ -4,11 +4,11 @@
   pkgs,
   ...
 }: let
-  cfg = config.services.homevpnctl;
-  homevpnctl = pkgs.callPackage ./package/package.nix {inherit cfg pkgs;};
+  cfg = config.services.homevpn;
+  homevpn = pkgs.callPackage ./package/homevpn.nix {inherit pkgs cfg config;};
 in {
   config = lib.mkIf cfg.enable {
-    systemd.user.services.homevpnctl = {
+    systemd.user.services.homevpn = {
       Unit = {
         Description = "Home VPN L2TP/IPsec Connection Daemon";
         After = ["network-online.target"];
@@ -18,19 +18,6 @@ in {
       Service = {
         Type = "simple";
 
-        ExecStart = "${homevpnctl}/bin/homevpnctl daemon";
-        ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
-
-        # Restart политика
-        Restart = "on-failure";
-        RestartSec = "30s";
-
-        # Процессы и сигналы
-        KillMode = "mixed";
-        KillSignal = "SIGTERM";
-        TimeoutStopSec = "30s";
-
-        # Окружение
         Environment = [
           "PATH=${lib.makeBinPath [
             pkgs.coreutils
@@ -45,6 +32,18 @@ in {
             pkgs.gnused
           ]}"
         ];
+
+        ExecStart = "${homevpn}/bin/homevpn daemon";
+        ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
+
+        # Restart политика
+        Restart = "on-failure";
+        RestartSec = "30s";
+
+        # Процессы и сигналы
+        KillMode = "mixed";
+        KillSignal = "SIGTERM";
+        TimeoutStopSec = "30s";
 
         # Логирование
         StandardOutput = "journal";

@@ -4,8 +4,8 @@
   pkgs,
   ...
 }: let
-  cfg = config.services.homevpnctl;
-  homevpnctl = pkgs.callPackage ./package/package.nix {inherit cfg pkgs;};
+  cfg = config.services.homevpn;
+  homevpn = pkgs.callPackage ./package/homevpn.nix {inherit pkgs cfg config;};
 in {
   imports = [
     ./options.nix
@@ -15,7 +15,7 @@ in {
 
   config = lib.mkIf cfg.enable {
     home.packages = [
-      homevpnctl
+      homevpn
       pkgs.coreutils
       pkgs.jq
       pkgs.networkmanager

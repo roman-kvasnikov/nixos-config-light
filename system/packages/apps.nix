@@ -32,7 +32,7 @@
     pinta
 
     # Crypto
-    # exodus
+    exodus
 
     # IDE
     code-cursor
