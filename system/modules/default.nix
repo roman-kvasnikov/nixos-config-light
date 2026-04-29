@@ -7,6 +7,7 @@
     ./hardware.nix
     ./i2c.nix
     ./i18n.nix
+    ./l2tp-ipsec.nix
     ./networking.nix
     ./nix.nix
     ./security.nix
