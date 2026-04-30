@@ -1,4 +1,13 @@
 {config, ...}: {
+  modules = {
+    homevpn = {
+      enable = true;
+
+      # configPath = "${config.xdg.configHome}/homevpn/homevpn.conf";
+      # interfaceName = "homevpn";
+    };
+  };
+
   services = {
     hyprland-display-switcher = {
       enable = true;

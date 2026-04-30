@@ -5,7 +5,7 @@
   ...
 }: {
   imports = [
-    ./services.nix
+    ./modules.nix
     ./modules
   ];
 
