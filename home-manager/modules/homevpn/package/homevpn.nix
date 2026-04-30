@@ -1,19 +1,26 @@
 {
   pkgs,
   cfg,
-  config,
   ...
 }:
-pkgs.writeShellScriptBin "homevpn"
-(
-  builtins.replaceStrings
-  [
-    "@configDirectory@"
-    "@configFile@"
-  ]
-  [
-    "${config.xdg.configHome}/homevpn"
-    cfg.configFile
-  ]
-  (builtins.readFile ./homevpn.sh)
-)
+pkgs.writeShellApplication {
+  name = "homevpn";
+
+  runtimeInputs = with pkgs; [
+    amneziawg-tools
+    iproute2
+    sudo
+  ];
+
+  text =
+    builtins.replaceStrings
+    [
+      "@configPath@"
+      "@interfaceName@"
+    ]
+    [
+      cfg.configPath
+      cfg.interfaceName
+    ]
+    (builtins.readFile ./homevpn.sh);
+}

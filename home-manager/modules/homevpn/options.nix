@@ -3,13 +3,19 @@
   config,
   ...
 }: {
-  options.services.homevpn = {
-    enable = lib.mkEnableOption "Home VPN L2TP/IPsec management tool";
+  options.modules.homevpn = {
+    enable = lib.mkEnableOption "Home VPN (AmneziaWG) CLI wrapper over awg-quick";
 
-    configFile = lib.mkOption {
-      description = "Path to configuration file";
-      type = lib.types.path;
-      default = "${config.xdg.configHome}/homevpn/config.json";
+    configPath = lib.mkOption {
+      type = lib.types.str;
+      default = "${config.xdg.configHome}/homevpn/homevpn.conf";
+      description = "Path to the AmneziaWG client config file";
+    };
+
+    interfaceName = lib.mkOption {
+      type = lib.types.str;
+      default = "homevpn";
+      description = "Name of the VPN tunnel network interface";
     };
   };
 }

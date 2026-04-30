@@ -8,12 +8,6 @@
       # fallbackMonitor = ", preferred, auto, 1";
     };
 
-    homevpn = {
-      enable = true;
-
-      # configFile = "${config.xdg.configHome}/homevpn/config.json";
-    };
-
     xray = {
       enable = true;
 
