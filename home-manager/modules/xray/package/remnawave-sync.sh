@@ -42,6 +42,12 @@ XRAY_CONFIG_FILE="@configFile@"
 # Command to restart Xray
 XRAY_RESTART_CMD="systemctl --user restart xray.service"
 
+# Override inbound listen address (useful when this VM serves as a gateway
+# for other devices, e.g. routed via Keenetic Connection Policy).
+# When true, replaces "127.0.0.1" listen values in inbounds with LISTEN_ADDRESS.
+OVERRIDE_LISTEN=false
+LISTEN_ADDRESS="0.0.0.0"
+
 # ============================================================
 
 log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"; }
@@ -130,7 +136,9 @@ log "Target outbound tag: ${TARGET_TAG}"
 # (freedom, blackhole, dns, loopback — these are not proxy outbounds)
 INFRA_PROTOCOLS='["freedom", "blackhole", "dns", "loopback"]'
 
-jq --arg tag "${TARGET_TAG}" --argjson infra "${INFRA_PROTOCOLS}" '
+jq --arg tag "${TARGET_TAG}" --argjson infra "${INFRA_PROTOCOLS}" \
+   --arg overrideListen "${OVERRIDE_LISTEN}" --arg listenAddr "${LISTEN_ADDRESS}" '
+
     # 1. Filter outbounds: keep our target + all infrastructure protocols
     .outbounds = [
         .outbounds[] |
@@ -172,6 +180,14 @@ jq --arg tag "${TARGET_TAG}" --argjson infra "${INFRA_PROTOCOLS}" '
               else . end
         )
       else . end
+
+    # 5. Optionally override inbound listen address
+    | if $overrideListen == "true" and (.inbounds | type) == "array" then
+        .inbounds = [
+            .inbounds[] |
+            if .listen == "127.0.0.1" then .listen = $listenAddr else . end
+        ]
+      else . end
 ' "${TMPFILE}" > "${TMPFILE}.cleaned"
 
 mv "${TMPFILE}.cleaned" "${TMPFILE}"
@@ -187,34 +203,58 @@ OB_COUNT=$(jq '.outbounds | length' "${TMPFILE}")
 OB_TAGS=$(jq -r '[.outbounds[].tag] | join(", ")' "${TMPFILE}")
 log "Cleaned config has ${OB_COUNT} outbounds: ${OB_TAGS}"
 
+if [[ "${OVERRIDE_LISTEN}" == "true" ]]; then
+    LISTEN_TAGS=$(jq -r --arg addr "${LISTEN_ADDRESS}" \
+        '[.inbounds[]? | select(.listen == $addr) | .tag] | join(", ")' "${TMPFILE}")
+    log "Inbounds now listening on ${LISTEN_ADDRESS}: ${LISTEN_TAGS:-<none>}"
+fi
+
 # Sanity check: "proxy" outbound must be present
 if [[ $(jq '[.outbounds[].tag] | index("proxy") != null' "${TMPFILE}") != "true" ]]; then
     log "ERROR: 'proxy' outbound missing after cleanup!"
     exit 1
 fi
 
-# --- 6. Update GeoIP and Geosite ---
+# --- 6. Update GeoIP and Geosite (track if files actually changed) ---
 
 log "Updating GeoIP and Geosite..."
 
-if curl -fL -o "$XRAY_CONFIG_DIR/geoip.dat.new" \
+GEO_CHANGED=false
+GEOIP_OLD_HASH=""
+GEOSITE_OLD_HASH=""
+[[ -f "${XRAY_CONFIG_DIR}/geoip.dat"   ]] && GEOIP_OLD_HASH=$(sha256sum   "${XRAY_CONFIG_DIR}/geoip.dat"   | cut -d' ' -f1)
+[[ -f "${XRAY_CONFIG_DIR}/geosite.dat" ]] && GEOSITE_OLD_HASH=$(sha256sum "${XRAY_CONFIG_DIR}/geosite.dat" | cut -d' ' -f1)
+
+if curl -fL -o "${XRAY_CONFIG_DIR}/geoip.dat.new" \
      https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat && \
-   curl -fL -o "$XRAY_CONFIG_DIR/geosite.dat.new" \
+   curl -fL -o "${XRAY_CONFIG_DIR}/geosite.dat.new" \
      https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat; then
 
-  # All files downloaded — make atomic replacement
-  mv "$XRAY_CONFIG_DIR/geoip.dat.new" "$XRAY_CONFIG_DIR/geoip.dat"
-  mv "$XRAY_CONFIG_DIR/geosite.dat.new" "$XRAY_CONFIG_DIR/geosite.dat"
+  mv "${XRAY_CONFIG_DIR}/geoip.dat.new"   "${XRAY_CONFIG_DIR}/geoip.dat"
+  mv "${XRAY_CONFIG_DIR}/geosite.dat.new" "${XRAY_CONFIG_DIR}/geosite.dat"
 
-  log "GeoIP and Geosite updated successfully"
+  GEOIP_NEW_HASH=$(sha256sum   "${XRAY_CONFIG_DIR}/geoip.dat"   | cut -d' ' -f1)
+  GEOSITE_NEW_HASH=$(sha256sum "${XRAY_CONFIG_DIR}/geosite.dat" | cut -d' ' -f1)
+
+  CHANGED_LIST=()
+  [[ "${GEOIP_OLD_HASH}"   != "${GEOIP_NEW_HASH}"   ]] && CHANGED_LIST+=("geoip")
+  [[ "${GEOSITE_OLD_HASH}" != "${GEOSITE_NEW_HASH}" ]] && CHANGED_LIST+=("geosite")
+
+  if (( ${#CHANGED_LIST[@]} > 0 )); then
+    GEO_CHANGED=true
+    log "GeoIP/Geosite updated (changed: ${CHANGED_LIST[*]})"
+  else
+    log "GeoIP/Geosite checked, no changes"
+  fi
 else
-  # Something went wrong — clean temporary files
-  rm -f "$XRAY_CONFIG_DIR"/*.new
+  rm -f "${XRAY_CONFIG_DIR}"/*.new
   log "ERROR: failed to update GeoIP and Geosite"
   exit 1
 fi
 
 # --- 7. Compare with current config ---
+
+CONFIG_CHANGED=true
 
 # Write pretty-printed config for install (preserve original key order)
 jq '.' "${TMPFILE}" > "${TMPFILE}.normalized"
@@ -225,32 +265,47 @@ if [[ -f "${XRAY_CONFIG_FILE}" ]]; then
     NEW_HASH=$(jq -cS 'walk(if type == "object" then del(.shortId) else . end)' "${TMPFILE}.normalized" | md5sum | cut -d' ' -f1)
 
     if [[ "${OLD_HASH}" == "${NEW_HASH}" ]]; then
-        log "Config unchanged (shortId rotation ignored), skipping"
-        exit 0
+        CONFIG_CHANGED=false
+        if [[ "${GEO_CHANGED}" == "true" ]]; then
+            log "Config unchanged, but geo files were updated — restart needed"
+        else
+            log "Config unchanged (shortId rotation ignored), nothing to do"
+            exit 0
+        fi
+    else
+        log "Config changes detected (old=${OLD_HASH} new=${NEW_HASH})"
+        log "--- DIFF START ---"
+        diff <(jq -S '.' "${XRAY_CONFIG_FILE}") <(jq -S '.' "${TMPFILE}.normalized") || true
+        log "--- DIFF END ---"
     fi
-    log "Changes detected (old=${OLD_HASH} new=${NEW_HASH})"
-    log "--- DIFF START ---"
-    diff <(jq -S '.' "${XRAY_CONFIG_FILE}") <(jq -S '.' "${TMPFILE}.normalized") || true
-    log "--- DIFF END ---"
 fi
 
-# --- 8. Atomic replace + restart ---
+# --- 8. Atomic replace (only if config changed) + restart ---
 
-if [[ -f "${XRAY_CONFIG_FILE}" ]]; then
-    cp "${XRAY_CONFIG_FILE}" "${XRAY_CONFIG_FILE}.bak"
+if [[ "${CONFIG_CHANGED}" == "true" ]]; then
+    if [[ -f "${XRAY_CONFIG_FILE}" ]]; then
+        cp "${XRAY_CONFIG_FILE}" "${XRAY_CONFIG_FILE}.bak"
+    fi
+
+    trap - EXIT
+    mv "${TMPFILE}.normalized" "${XRAY_CONFIG_FILE}"
+    rm -f "${TMPFILE}" "${TMPFILE}.filtered" "${TMPFILE}.cleaned" 2>/dev/null
+    log "Config written: ${XRAY_CONFIG_FILE}"
 fi
-
-trap - EXIT
-mv "${TMPFILE}.normalized" "${XRAY_CONFIG_FILE}"
-rm -f "${TMPFILE}" "${TMPFILE}.filtered" "${TMPFILE}.cleaned" 2>/dev/null
-log "Config written: ${XRAY_CONFIG_FILE}"
 
 log "Restarting Xray..."
 if eval "${XRAY_RESTART_CMD}"; then
-    log "=== Done: proxy (${NODE_ADDRESS}:${NODE_PORT}, was ${TARGET_TAG}) — ${OB_COUNT} outbounds ==="
+    if [[ "${CONFIG_CHANGED}" == "true" ]]; then
+        log "=== Done: proxy (${NODE_ADDRESS}:${NODE_PORT}, was ${TARGET_TAG}) — ${OB_COUNT} outbounds ==="
+    else
+        log "=== Done: restart for geo update only ==="
+    fi
 else
-    log "ERROR: restart failed, rolling back"
-    [[ -f "${XRAY_CONFIG_FILE}.bak" ]] && mv "${XRAY_CONFIG_FILE}.bak" "${XRAY_CONFIG_FILE}"
-    eval "${XRAY_RESTART_CMD}" || true
+    log "ERROR: restart failed"
+    if [[ "${CONFIG_CHANGED}" == "true" && -f "${XRAY_CONFIG_FILE}.bak" ]]; then
+        log "Rolling back config..."
+        mv "${XRAY_CONFIG_FILE}.bak" "${XRAY_CONFIG_FILE}"
+        eval "${XRAY_RESTART_CMD}" || true
+    fi
     exit 1
 fi

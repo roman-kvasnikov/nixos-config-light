@@ -1,5 +1,6 @@
 {
   imports = [
+    ./amneziawg.nix
     ./boot.nix
     ./environment.nix
     ./fish.nix

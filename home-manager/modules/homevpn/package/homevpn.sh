@@ -547,7 +547,7 @@ show_status() {
             ;;
         "not_configured")
             print --warning "VPN Status: NOT CONFIGURED"
-            print --info "Run 'homevpnctl start' to create and connect"
+            print --info "Run 'homevpn start' to create and connect"
             ;;
         *)
             print --error "VPN Status: UNKNOWN"
@@ -557,7 +557,7 @@ show_status() {
     # Показать информацию о systemd сервисе
     echo ""
     print --purple "📋 Systemd Service Status:"
-    systemctl --user status homevpnctl --no-pager -l || true
+    systemctl --user status homevpn --no-pager -l || true
 
     # Daemon статус
     echo ""
@@ -618,7 +618,7 @@ main() {
                 echo ""
             fi
             print --info "Systemd service logs:"
-            journalctl --user -u homevpnctl -f --no-pager
+            journalctl --user -u homevpn -f --no-pager
             ;;
         config)
             print --purple "🔧 Home VPN Configuration:"
@@ -792,23 +792,23 @@ main() {
             fi
             ;;
         service-enable)
-            systemctl --user enable homevpnctl
+            systemctl --user enable homevpn
             print --success "Home VPN service enabled for autostart"
             ;;
         service-start)
-            systemctl --user start homevpnctl
+            systemctl --user start homevpn
             print --success "Home VPN systemd service started"
             ;;
         service-stop)
-            systemctl --user stop homevpnctl
+            systemctl --user stop homevpn
             print --success "Home VPN systemd service stopped"
             ;;
         service-restart)
-            systemctl --user restart homevpnctl
+            systemctl --user restart homevpn
             print --success "Home VPN systemd service restarted"
             ;;
         service-disable)
-            systemctl --user disable homevpnctl
+            systemctl --user disable homevpn
             print --success "Home VPN service disabled from autostart"
             ;;
         clean)
@@ -825,7 +825,7 @@ main() {
 show_help() {
     print --purple "🏠 Home VPN L2TP/IPsec Management Tool"
     echo ""
-    print --info "Usage: homevpnctl {command}"
+    print --info "Usage: homevpn {command}"
     echo ""
 
     print --cyan "🚀 Quick commands:"
@@ -859,12 +859,12 @@ show_help() {
     echo ""
 
     print --cyan "💡 Example usage:"
-    echo -e "  homevpnctl connect       # Smart connect (checks if at home first)"
-    echo -e "  homevpnctl check-home    # Check if currently at home"
-    echo -e "  homevpnctl force-connect # Force connect bypassing home detection"
-    echo -e "  homevpnctl status        # Check connection status"
-    echo -e "  homevpnctl logs          # View connection logs"
-    echo -e "  homevpnctl disconnect    # Disconnect from VPN"
+    echo -e "  homevpn connect       # Smart connect (checks if at home first)"
+    echo -e "  homevpn check-home    # Check if currently at home"
+    echo -e "  homevpn force-connect # Force connect bypassing home detection"
+    echo -e "  homevpn status        # Check connection status"
+    echo -e "  homevpn logs          # View connection logs"
+    echo -e "  homevpn disconnect    # Disconnect from VPN"
     echo ""
 
     print --info "Configuration file: $CONFIG_FILE"
