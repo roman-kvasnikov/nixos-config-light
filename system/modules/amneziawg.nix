@@ -9,10 +9,11 @@
   ];
 
   boot = {
-    kernelModules = ["amneziawg"];
     extraModulePackages = with config.boot.kernelPackages; [
       amneziawg
     ];
+
+    kernelModules = ["amneziawg"];
   };
 
   security.sudo.extraRules = [

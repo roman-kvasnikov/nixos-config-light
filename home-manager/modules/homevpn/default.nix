@@ -5,7 +5,10 @@
   ...
 }: let
   cfg = config.modules.homevpn;
-  homevpn = pkgs.callPackage ./package/homevpn.nix {inherit pkgs cfg;};
+  homevpn = pkgs.callPackage ./package/homevpn.nix {
+    inherit pkgs;
+    inherit (cfg) configPath interfaceName;
+  };
 in {
   imports = [
     ./options.nix

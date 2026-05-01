@@ -1,6 +1,7 @@
 {
   pkgs,
-  cfg,
+  configPath,
+  interfaceName,
   ...
 }:
 pkgs.writeShellApplication {
@@ -9,7 +10,6 @@ pkgs.writeShellApplication {
   runtimeInputs = with pkgs; [
     amneziawg-tools
     iproute2
-    sudo
   ];
 
   text =
@@ -19,8 +19,8 @@ pkgs.writeShellApplication {
       "@interfaceName@"
     ]
     [
-      cfg.configPath
-      cfg.interfaceName
+      configPath
+      interfaceName
     ]
     (builtins.readFile ./homevpn.sh);
 }

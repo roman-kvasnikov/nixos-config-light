@@ -54,6 +54,7 @@ cmd_status() {
         echo "homevpn: disconnected"
         return 0
     fi
+    echo "homevpn: connected"
     sudo awg show "$IFACE"
 }
 
