@@ -41,8 +41,6 @@
     gnome-calculator # Calculator
     qalculate-gtk # Calculator
     gnome-calendar # Calendar
-    thunderbird # Email/ Calendar / Contacts Client
-    vdirsyncer # Calendar Sync CalDAV
     loupe # Image viewer
     decibels # Audio player
     gedit # Text editor

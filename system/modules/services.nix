@@ -5,6 +5,8 @@
   ...
 }: {
   services = {
+    resolved.enable = true;
+
     gnome.gnome-keyring.enable = true;
 
     pipewire = {

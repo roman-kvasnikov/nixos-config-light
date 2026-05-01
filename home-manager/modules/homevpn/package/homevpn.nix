@@ -1,7 +1,8 @@
 {
   pkgs,
-  configPath,
+  configFile,
   interfaceName,
+  overrideFile,
   ...
 }:
 pkgs.writeShellApplication {
@@ -15,12 +16,14 @@ pkgs.writeShellApplication {
   text =
     builtins.replaceStrings
     [
-      "@configPath@"
+      "@configFile@"
       "@interfaceName@"
+      "@overrideFile@"
     ]
     [
-      configPath
+      configFile
       interfaceName
+      overrideFile
     ]
     (builtins.readFile ./homevpn.sh);
 }

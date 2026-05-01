@@ -7,7 +7,7 @@
   cfg = config.modules.homevpn;
   homevpn = pkgs.callPackage ./package/homevpn.nix {
     inherit pkgs;
-    inherit (cfg) configPath interfaceName;
+    inherit (cfg) configFile interfaceName overrideFile;
   };
 in {
   imports = [
