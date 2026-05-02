@@ -6,15 +6,13 @@
 }: let
   cfg = config.services.hyprland-display-switcher;
 
-  hyprland-display-switcher = pkgs.callPackage ./package/package.nix {inherit cfg pkgs;};
+  hyprland-display-switcher = pkgs.callPackage ./package/hyprland-display-switcher.nix {
+    inherit pkgs;
+    inherit (cfg) builtinMonitor externalMonitor fallbackMonitor;
+  };
 in {
   config = lib.mkIf cfg.enable {
-    home.packages = [
-      hyprland-display-switcher
-      pkgs.coreutils
-      pkgs.gnugrep
-      pkgs.hyprland
-    ];
+    home.packages = [hyprland-display-switcher];
 
     systemd.user.paths.hyprland-display-switcher = {
       Unit = {
@@ -47,14 +45,6 @@ in {
 
       Service = {
         Type = "oneshot";
-
-        Environment = [
-          "PATH=${lib.makeBinPath [
-            pkgs.coreutils
-            pkgs.gnugrep
-            pkgs.hyprland
-          ]}"
-        ];
 
         ExecStart = "${hyprland-display-switcher}/bin/hyprland-display-switcher";
       };
