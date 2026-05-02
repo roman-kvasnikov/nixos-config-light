@@ -33,22 +33,12 @@ in {
         ];
 
         ExecStart = "${pkgs.xray}/bin/xray run -config ${cfg.configFile}";
-        ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
 
-        # Restart политика
         Restart = "on-failure";
         RestartSec = "30s";
 
-        # Процессы и сигналы
-        KillMode = "mixed";
-        KillSignal = "SIGTERM";
         TimeoutStopSec = "30s";
 
-        # Логирование
-        StandardOutput = "journal";
-        StandardError = "journal";
-
-        # Безопасность
         NoNewPrivileges = true;
         PrivateTmp = true;
         ProtectSystem = "strict";
@@ -68,12 +58,10 @@ in {
         Description = "Sync Xray config from Remnawave Panel";
         After = ["network-online.target"];
       };
+
       Service = {
         Type = "oneshot";
         ExecStart = "${remnawave-sync}/bin/remnawave-sync";
-
-        StandardOutput = "journal";
-        StandardError = "journal";
       };
     };
 
@@ -81,11 +69,13 @@ in {
       Unit = {
         Description = "Sync Xray config from Remnawave Panel timer";
       };
+
       Timer = {
         OnBootSec = "30s";
         OnCalendar = "daily";
         Unit = "remnawave-sync.service";
       };
+
       Install = {
         WantedBy = ["timers.target"];
       };

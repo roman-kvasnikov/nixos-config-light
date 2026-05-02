@@ -5,9 +5,17 @@
   ...
 }: let
   cfg = config.services.hyprland-display-switcher;
+
   hyprland-display-switcher = pkgs.callPackage ./package/package.nix {inherit cfg pkgs;};
 in {
   config = lib.mkIf cfg.enable {
+    home.packages = [
+      hyprland-display-switcher
+      pkgs.coreutils
+      pkgs.gnugrep
+      pkgs.hyprland
+    ];
+
     systemd.user.paths.hyprland-display-switcher = {
       Unit = {
         Description = "Monitor for display changes";

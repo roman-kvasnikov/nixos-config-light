@@ -20,6 +20,7 @@ in {
         Description = "Home VPN automatic management";
         After = ["network-online.target"];
       };
+
       Service = {
         Type = "oneshot";
         ExecStart = "${homevpn-auto}/bin/homevpn-auto";
@@ -30,11 +31,13 @@ in {
       Unit = {
         Description = "Home VPN automatic management timer";
       };
+
       Timer = {
         OnBootSec = "30s";
         OnUnitActiveSec = cfg.timerInterval;
         Unit = "homevpn-auto.service";
       };
+
       Install = {
         WantedBy = ["timers.target"];
       };

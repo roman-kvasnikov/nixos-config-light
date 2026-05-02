@@ -14,9 +14,9 @@ pkgs.writeShellApplication {
   name = "homevpn-auto";
 
   runtimeInputs = with pkgs; [
+    amneziawg-tools
     networkmanager
     iproute2
-    amneziawg-tools
     util-linux
     coreutils
     gawk
