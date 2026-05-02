@@ -5,9 +5,15 @@
   ...
 }: let
   cfg = config.services.xray;
-  remnawave-sync = pkgs.callPackage ./package/remnawave-sync.nix {inherit pkgs cfg;};
+
+  remnawave-sync = pkgs.callPackage ./package/remnawave-sync.nix {
+    inherit pkgs;
+    inherit (cfg) workingDirectory configFile;
+  };
 in {
   config = lib.mkIf cfg.enable {
+    home.packages = [remnawave-sync];
+
     systemd.user.services.xray = {
       Unit = {
         Description = "User Xray Service";
@@ -26,7 +32,6 @@ in {
           "XRAY_LOCATION_ASSET=${cfg.workingDirectory}"
         ];
 
-        # ExecStartPre = "${remnawave-sync}/bin/remnawave-sync";
         ExecStart = "${pkgs.xray}/bin/xray run -config ${cfg.configFile}";
         ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
 
@@ -58,49 +63,32 @@ in {
       };
     };
 
-    # systemd.user.services.remnawave-sync = {
-    #   Unit = {
-    #     Description = "Sync Xray config from Remnawave Panel";
+    systemd.user.services.remnawave-sync = {
+      Unit = {
+        Description = "Sync Xray config from Remnawave Panel";
+        After = ["network-online.target"];
+      };
+      Service = {
+        Type = "oneshot";
+        ExecStart = "${remnawave-sync}/bin/remnawave-sync";
 
-    #     After = ["network-online.target" "nss-lookup.target"];
-    #     Wants = ["network-online.target" "nss-lookup.target"];
-    #   };
+        StandardOutput = "journal";
+        StandardError = "journal";
+      };
+    };
 
-    #   Service = {
-    #     Type = "oneshot";
-
-    #     Environment = [
-    #       "PATH=${lib.makeBinPath [
-    #         pkgs.coreutils
-    #         pkgs.curl
-    #         pkgs.jq
-    #       ]}"
-    #     ];
-
-    #     ExecStart = "${remnawave-sync}/bin/remnawave-sync";
-
-    #     StandardOutput = "journal";
-    #     StandardError = "journal";
-    #   };
-
-    #   Install = {
-    #     WantedBy = ["default.target"];
-    #   };
-    # };
-
-    # systemd.user.timers.remnawave-sync = {
-    #   Unit = {
-    #     Description = "Sync Xray config from Remnawave Panel";
-    #   };
-
-    #   Timer = {
-    #     OnCalendar = "*-*-* 05:00:00";
-    #     Persistent = true;
-    #   };
-
-    #   Install = {
-    #     WantedBy = ["timers.target"];
-    #   };
-    # };
+    systemd.user.timers.remnawave-sync = {
+      Unit = {
+        Description = "Sync Xray config from Remnawave Panel timer";
+      };
+      Timer = {
+        OnBootSec = "30s";
+        OnCalendar = "daily";
+        Unit = "remnawave-sync.service";
+      };
+      Install = {
+        WantedBy = ["timers.target"];
+      };
+    };
   };
 }

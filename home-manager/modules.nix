@@ -6,6 +6,14 @@
       # configPath = "${config.xdg.configHome}/homevpn/homevpn.conf";
       # interfaceName = "homevpn";
     };
+
+    homevpn-auto = {
+      enable = true;
+
+      homeSsid = "Izolda-Rally";
+      homeGatewayIp = "192.168.1.1";
+      homeGatewayMac = "50:ff:20:d1:11:6b";
+    };
   };
 
   services = {

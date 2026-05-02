@@ -1,6 +1,7 @@
 {
   pkgs,
-  cfg,
+  workingDirectory,
+  configFile,
   ...
 }:
 pkgs.writeShellApplication {
@@ -21,8 +22,8 @@ pkgs.writeShellApplication {
       "@configFile@"
     ]
     [
-      cfg.workingDirectory
-      cfg.configFile
+      workingDirectory
+      configFile
     ]
     (builtins.readFile ./remnawave-sync.sh);
 }

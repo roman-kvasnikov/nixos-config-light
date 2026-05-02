@@ -40,7 +40,7 @@
 
     timerInterval = lib.mkOption {
       type = lib.types.str;
-      default = "5min";
+      default = "3min";
       description = "How often the safety-net timer runs (systemd time format)";
     };
   };

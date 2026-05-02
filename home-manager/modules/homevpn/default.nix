@@ -5,6 +5,7 @@
   ...
 }: let
   cfg = config.modules.homevpn;
+
   homevpn = pkgs.callPackage ./package/homevpn.nix {
     inherit pkgs;
     inherit (cfg) configFile interfaceName overrideFile;
