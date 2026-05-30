@@ -33,7 +33,7 @@ USER_AGENT="NotebookXray/1.0"
 
 # Exact outbound to keep: address + port
 NODE_ADDRESS="ee.be-free.online"
-NODE_PORT=443
+NODE_PORT=8443
 
 # Paths
 XRAY_CONFIG_DIR="@workingDirectory@"

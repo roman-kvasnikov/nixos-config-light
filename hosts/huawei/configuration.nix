@@ -37,6 +37,12 @@
         preLVM = true; # LUKS расшифровывается ДО активации LVM
       };
     };
+
+    # Disable PSR (Power Saving Recommendation) for Intel GPU and Xe GPU (Антимерцание экрана)
+    # kernelParams = [
+    #   "i915.enable_psr=0"
+    #   "xe.enable_psr=0"
+    # ];
   };
 
   environment.systemPackages = with pkgs; [

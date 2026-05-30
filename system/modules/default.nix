@@ -2,6 +2,7 @@
   imports = [
     ./amneziawg.nix
     ./boot.nix
+    ./dconf.nix
     ./environment.nix
     ./fish.nix
     ./fonts.nix

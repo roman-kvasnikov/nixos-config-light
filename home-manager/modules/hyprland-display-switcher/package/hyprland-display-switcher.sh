@@ -18,7 +18,6 @@ readonly YELLOW='\033[1;33m'
 readonly BLUE='\033[0;34m'
 readonly PURPLE='\033[0;35m'
 readonly CYAN='\033[0;36m'
-readonly WHITE='\033[1;37m'
 readonly NC='\033[0m' # No Color
 
 # =============================================================================
@@ -105,7 +104,8 @@ monitor_name() {
 main() {
 	info "Checking monitor configuration..."
 
-	local total_monitors=$(count_monitors)
+	local total_monitors
+	total_monitors=$(count_monitors)
 	info "Total connected monitors: $total_monitors"
 
 	if [ "$total_monitors" -gt 1 ]; then
