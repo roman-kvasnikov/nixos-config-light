@@ -9,6 +9,7 @@
     homeDirectory = "/home/${user.name}";
     sessionVariables = {
       XDG_CONFIG_HOME = config.home.homeDirectory;
+      GTK_USE_PORTAL = true;
     };
     stateVersion = version;
   };
