@@ -22,7 +22,7 @@
 
     manualOverrideMinutes = lib.mkOption {
       type = lib.types.int;
-      default = 30;
+      default = 180;
       description = "How long manual VPN actions are respected before automation resumes";
     };
 

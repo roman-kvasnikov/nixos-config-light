@@ -9,6 +9,7 @@
     ./hardware.nix
     ./i2c.nix
     ./i18n.nix
+    ./mtr.nix
     ./networking.nix
     ./nix.nix
     ./security.nix

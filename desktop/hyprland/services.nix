@@ -1,5 +1,7 @@
 {pkgs, ...}: {
   services = {
+    # xserver.enable = true;
+
     displayManager = {
       sddm = {
         enable = true;
@@ -13,7 +15,7 @@
         ];
       };
 
-      defaultSession = "hyprland";
+      defaultSession = "hyprland-uwsm";
     };
   };
 }

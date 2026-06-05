@@ -3,11 +3,11 @@
     hyprland = {
       enable = true;
 
-      withUWSM = false;
+      withUWSM = true;
     };
 
     uwsm = {
-      enable = false;
+      enable = true;
     };
   };
 }
