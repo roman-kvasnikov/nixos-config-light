@@ -2,16 +2,14 @@
   imports = [
     ./amneziawg.nix
     ./boot.nix
-    ./dconf.nix
     ./environment.nix
-    ./fish.nix
     ./fonts.nix
     ./hardware.nix
     ./i2c.nix
     ./i18n.nix
-    ./mtr.nix
     ./networking.nix
     ./nix.nix
+    ./programs.nix
     ./security.nix
     ./services.nix
     ./systemd.nix
