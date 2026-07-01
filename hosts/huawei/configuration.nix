@@ -72,20 +72,33 @@
       enable = true;
 
       settings = {
-        CPU_SCALING_GOVERNOR_ON_AC = "balance_performance";
+        # intel_pstate active mode → только powersave/performance.
+        # powersave здесь = автономный HWP, политику задаёт EPP ниже.
+        CPU_SCALING_GOVERNOR_ON_AC = "powersave";
         CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
 
-        CPU_ENERGY_PERF_POLICY_ON_AC = "balance_performance"; # performance, balance_performance, powersave
-        CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
+        # EPP (HWP.EPP) — собственно баланс perf/энергия
+        # performance | balance_performance | balance_power | power
+        CPU_ENERGY_PERF_POLICY_ON_AC = "balance_performance";
+        CPU_ENERGY_PERF_POLICY_ON_BAT = "balance_power"; # "power" — если важнее автономность, чем отзывчивость
 
+        # P-state limits, % от доступной производительности
         CPU_MIN_PERF_ON_AC = 0;
         CPU_MAX_PERF_ON_AC = 100;
         CPU_MIN_PERF_ON_BAT = 0;
-        CPU_MAX_PERF_ON_BAT = 70;
+        CPU_MAX_PERF_ON_BAT = 80; # см. примечание про race-to-idle
 
-        # Optional helps save long term battery health
-        START_CHARGE_THRESH_BAT0 = 40; # 40 and below it starts to charge
-        STOP_CHARGE_THRESH_BAT0 = 80; # 80 and above it stops charging
+        # Turbo boost: 1 = разрешить (не значит "всегда включён")
+        CPU_BOOST_ON_AC = 1;
+        CPU_BOOST_ON_BAT = 0; # 0 — если хочешь жёстко резать нагрев/кулер на батарее
+
+        # HWP dynamic boost — быстрее реагирует на всплески (Skylake+)
+        CPU_HWP_DYN_BOOST_ON_AC = 1;
+        CPU_HWP_DYN_BOOST_ON_BAT = 0;
+
+        # Battery care
+        START_CHARGE_THRESH_BAT0 = 40;
+        STOP_CHARGE_THRESH_BAT0 = 80;
       };
     };
 

@@ -14,7 +14,7 @@
     telegram-desktop
 
     # Media
-    vlc
+    # vlc
     mpv
     yt-dlp
     cassette
@@ -22,6 +22,7 @@
     # Video
     ffmpeg
     ffmpegthumbnailer
+    shotcut
 
     # Documents
     evince
