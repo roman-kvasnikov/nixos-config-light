@@ -1,6 +1,5 @@
 {
   imports = [
-    ./caelestia.nix
     ./cursor.nix
     ./dconf.nix
     ./homevpn
