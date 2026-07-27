@@ -7,8 +7,8 @@
   cfg = config.modules.homevpn-auto;
 
   homevpn-auto = pkgs.callPackage ./package/homevpn-auto.nix {
-    inherit pkgs;
-    inherit (cfg) homeSsid homeGatewayIp homeGatewayMac manualOverrideMinutes handshakeMaxAgeSeconds interfaceName timerInterval;
+    inherit pkgs lib;
+    inherit (cfg) homeGatewayIps homeGatewayMac manualOverrideMinutes handshakeMaxAgeSeconds interfaceName timerInterval;
     inherit config;
   };
 in {

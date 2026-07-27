@@ -10,9 +10,8 @@
     homevpn-auto = {
       enable = true;
 
-      homeSsid = "Izolda-Rally";
-      homeGatewayIp = "192.168.1.1";
-      homeGatewayMac = "50:ff:20:d1:11:6b";
+      homeGatewayIps = ["192.168.10.1" "192.168.30.1"];
+      homeGatewayMac = "bc:24:11:95:c6:82";
     };
   };
 

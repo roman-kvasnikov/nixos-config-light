@@ -1,7 +1,7 @@
 {
   pkgs,
-  homeSsid,
-  homeGatewayIp,
+  lib,
+  homeGatewayIps,
   homeGatewayMac,
   manualOverrideMinutes,
   handshakeMaxAgeSeconds,
@@ -27,8 +27,7 @@ pkgs.writeShellApplication {
   text =
     builtins.replaceStrings
     [
-      "@homeSsid@"
-      "@homeGatewayIp@"
+      "@homeGatewayIps@"
       "@homeGatewayMac@"
       "@overrideTimeoutSeconds@"
       "@handshakeMaxAgeSeconds@"
@@ -36,8 +35,7 @@ pkgs.writeShellApplication {
       "@overrideFile@"
     ]
     [
-      homeSsid
-      homeGatewayIp
+      (pkgs.lib.concatStringsSep " " homeGatewayIps)
       homeGatewayMac
       (toString (manualOverrideMinutes * 60))
       (toString handshakeMaxAgeSeconds)

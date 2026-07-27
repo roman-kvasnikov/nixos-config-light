@@ -3,8 +3,7 @@
 set -euo pipefail
 
 # Configuration injected at build time
-readonly HOME_SSID="@homeSsid@"
-readonly HOME_GATEWAY_IP="@homeGatewayIp@"
+readonly HOME_GATEWAY_IPS=(@homeGatewayIps@)
 readonly HOME_GATEWAY_MAC="@homeGatewayMac@"
 readonly OVERRIDE_TIMEOUT_SECONDS="@overrideTimeoutSeconds@"
 readonly HANDSHAKE_MAX_AGE_SECONDS="@handshakeMaxAgeSeconds@"
@@ -17,34 +16,29 @@ log() {
     echo "homevpn-auto: $*"
 }
 
-# Detect home network: SSID + gateway IP + gateway MAC must all match
+# Detect home network: gateway IP + gateway MAC must match
 is_at_home() {
-    local current_ssid current_gw current_mac
+    local gw mac candidate is_home_gw
 
-    current_ssid="$(nmcli -t -f active,ssid dev wifi 2>/dev/null | grep '^yes' | cut -d: -f2 || true)"
-    current_gw="$(ip route show default 2>/dev/null | awk '/default/ {print $3; exit}' || true)"
+    while read -r gw; do
+        [[ -z "$gw" ]] && continue
 
-    if [[ -z "$current_gw" ]]; then
-        log "no default gateway, considering not-at-home"
-        return 1
-    fi
+        is_home_gw=0
+        for candidate in "${HOME_GATEWAY_IPS[@]}"; do
+            [[ "$gw" == "$candidate" ]] && is_home_gw=1 && break
+        done
+        [[ "$is_home_gw" -eq 0 ]] && continue
 
-    current_mac="$(ip neigh show "$current_gw" 2>/dev/null | awk '{print $5}' | head -1 || true)"
+        mac="$(ip neigh show "$gw" 2>/dev/null | awk '{print $5}' | head -1 || true)"
+        if [[ "$mac" == "$HOME_GATEWAY_MAC" ]]; then
+            log "at home via $gw ($mac)"
+            return 0
+        fi
+        log "gateway $gw MAC mismatch: '$mac' != '$HOME_GATEWAY_MAC'"
+    done < <(ip route show default 2>/dev/null | awk '/default/ {print $3}')
 
-    if [[ "$current_ssid" != "$HOME_SSID" ]]; then
-        log "ssid mismatch: '$current_ssid' != '$HOME_SSID'"
-        return 1
-    fi
-    if [[ "$current_gw" != "$HOME_GATEWAY_IP" ]]; then
-        log "gateway IP mismatch: '$current_gw' != '$HOME_GATEWAY_IP'"
-        return 1
-    fi
-    if [[ "$current_mac" != "$HOME_GATEWAY_MAC" ]]; then
-        log "gateway MAC mismatch: '$current_mac' != '$HOME_GATEWAY_MAC'"
-        return 1
-    fi
-
-    return 0
+    log "not at home"
+    return 1
 }
 
 # Check if user manually changed VPN state recently
