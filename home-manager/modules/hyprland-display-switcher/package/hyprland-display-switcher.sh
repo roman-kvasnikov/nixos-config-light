@@ -9,7 +9,11 @@ IFS=$'\n\t'
 # =============================================================================
 
 # Основные пути
-readonly BUILTIN_MONITOR="@builtinMonitor@" # Встроенный монитор ноутбука
+readonly BUILTIN_MONITOR="@builtinMonitor@" # "eDP-1, 3120x2080@90.00, auto, 1.6"
+
+# Парсинг hyprlang-строки в поля для hl.monitor
+IFS=', ' read -r B_NAME B_MODE B_POS B_SCALE <<<"$BUILTIN_MONITOR"
+[ "$B_POS" = "auto" ] && B_POS="0x0"
 
 # Цвета для вывода (ANSI escape codes)
 readonly RED='\033[0;31m'
@@ -72,13 +76,13 @@ check_dependencies() {
         missing_deps+=("grep")
     fi
 
-    if ! command -v cut >/dev/null 2>&1; then
-        missing_deps+=("cut")
+    if ! command -v wc >/dev/null 2>&1; then
+        missing_deps+=("wc")
     fi
 
     if [ ${#missing_deps[@]} -gt 0 ]; then
         error "Missing required dependencies: ${missing_deps[*]}"
-        error "Make sure hyprctl, grep, cut are installed"
+        error "Make sure hyprctl, grep, wc are installed"
         exit 1
     fi
 }
@@ -89,12 +93,9 @@ check_dependencies() {
 
 # Функция для подсчета подключенных мониторов
 count_monitors() {
-	hyprctl monitors all | grep -c "^Monitor"
-}
-
-# Функция для извлечения имени монитора
-monitor_name() {
-	echo "$1" | cut -d',' -f1
+    local n
+    n=$(grep -lx connected /sys/class/drm/*/status 2>/dev/null | wc -l) || true
+    printf '%s' "$n"
 }
 
 # =============================================================================
@@ -102,23 +103,21 @@ monitor_name() {
 # =============================================================================
 
 main() {
-	info "Checking monitor configuration..."
+    info "Checking monitor configuration..."
 
-	local total_monitors
-	total_monitors=$(count_monitors)
-	info "Total connected monitors: $total_monitors"
+    local total_monitors
+    total_monitors=$(count_monitors)
+    info "Total connected monitors: $total_monitors"
 
-	if [ "$total_monitors" -gt 1 ]; then
-		# Если есть внешние мониторы - всегда отключаем встроенный
-		info "External monitor detected, ensuring built-in is disabled"
-		hyprctl keyword monitor "$(monitor_name "$BUILTIN_MONITOR"), disable"
-		success "Built-in monitor disabled"
-	else
-		# Если только встроенный - всегда включаем
-		info "Only built-in monitor detected, ensuring it's enabled"
-		hyprctl keyword monitor "$BUILTIN_MONITOR"
-		success "Built-in monitor enabled"
-	fi
+    if [ "$total_monitors" -gt 1 ]; then
+        info "External monitor detected, ensuring built-in is disabled"
+        hyprctl eval "hl.monitor({ output = '$B_NAME', disabled = true })"
+        success "Built-in monitor disabled"
+    else
+        info "Only built-in monitor detected, ensuring it's enabled"
+        hyprctl eval "hl.monitor({ output = '$B_NAME', mode = '$B_MODE', position = '$B_POS', scale = $B_SCALE, disabled = false })"
+        success "Built-in monitor enabled"
+    fi
 }
 
 # =============================================================================

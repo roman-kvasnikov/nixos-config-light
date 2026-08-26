@@ -5,7 +5,7 @@
   ...
 }:
 pkgs.writeShellApplication {
-  name = "remnawave-sync";
+  name = "sync-xray-config";
 
   runtimeInputs = with pkgs; [
     coreutils
@@ -25,5 +25,5 @@ pkgs.writeShellApplication {
       workingDirectory
       configFile
     ]
-    (builtins.readFile ./remnawave-sync.sh);
+    (builtins.readFile ./sync-xray-config.sh);
 }

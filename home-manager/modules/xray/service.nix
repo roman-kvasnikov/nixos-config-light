@@ -6,13 +6,13 @@
 }: let
   cfg = config.services.xray;
 
-  remnawave-sync = pkgs.callPackage ./package/remnawave-sync.nix {
+  sync-xray-config = pkgs.callPackage ./package/sync-xray-config.nix {
     inherit pkgs;
     inherit (cfg) workingDirectory configFile;
   };
 in {
   config = lib.mkIf cfg.enable {
-    home.packages = [remnawave-sync];
+    home.packages = [sync-xray-config];
 
     systemd.user.services.xray = {
       Unit = {
@@ -53,7 +53,7 @@ in {
       };
     };
 
-    systemd.user.services.remnawave-sync = {
+    systemd.user.services.sync-xray-config = {
       Unit = {
         Description = "Sync Xray config from Remnawave Panel";
         After = ["network-online.target"];
@@ -61,11 +61,11 @@ in {
 
       Service = {
         Type = "oneshot";
-        ExecStart = "${remnawave-sync}/bin/remnawave-sync";
+        ExecStart = "${sync-xray-config}/bin/sync-xray-config";
       };
     };
 
-    systemd.user.timers.remnawave-sync = {
+    systemd.user.timers.sync-xray-config = {
       Unit = {
         Description = "Sync Xray config from Remnawave Panel timer";
       };
@@ -73,7 +73,7 @@ in {
       Timer = {
         OnBootSec = "30s";
         OnCalendar = "daily";
-        Unit = "remnawave-sync.service";
+        Unit = "sync-xray-config.service";
       };
 
       Install = {

@@ -17,7 +17,6 @@
     foot
 
     # File managers
-    # thunar
     nautilus
 
     # Screenshots

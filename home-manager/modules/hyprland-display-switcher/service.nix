@@ -14,44 +14,44 @@ in {
   config = lib.mkIf cfg.enable {
     home.packages = [hyprland-display-switcher];
 
-    systemd.user.paths.hyprland-display-switcher = {
-      Unit = {
-        Description = "Monitor for display changes";
+    # systemd.user.paths.hyprland-display-switcher = {
+    #   Unit = {
+    #     Description = "Monitor for display changes";
 
-        After = ["hyprland-session.target"];
-        PartOf = ["hyprland-session.target"];
-        Requires = ["hyprland-session.target"];
-      };
+    #     After = ["hyprland-session.target"];
+    #     PartOf = ["hyprland-session.target"];
+    #     Requires = ["hyprland-session.target"];
+    #   };
 
-      Path = {
-        PathModified = "/sys/class/drm";
-        MakeDirectory = false;
-        DirectoryNotEmpty = "/sys/class/drm";
-      };
+    #   Path = {
+    #     PathModified = "/sys/class/drm";
+    #     MakeDirectory = false;
+    #     DirectoryNotEmpty = "/sys/class/drm";
+    #   };
 
-      Install = {
-        WantedBy = ["hyprland-session.target"];
-      };
-    };
+    #   Install = {
+    #     WantedBy = ["hyprland-session.target"];
+    #   };
+    # };
 
-    systemd.user.services.hyprland-display-switcher = {
-      Unit = {
-        Description = "Hyprland Display Switcher";
+    # systemd.user.services.hyprland-display-switcher = {
+    #   Unit = {
+    #     Description = "Hyprland Display Switcher";
 
-        After = ["hyprland-session.target"];
-        PartOf = ["hyprland-session.target"];
-        Requires = ["hyprland-session.target"];
-      };
+    #     After = ["hyprland-session.target"];
+    #     PartOf = ["hyprland-session.target"];
+    #     Requires = ["hyprland-session.target"];
+    #   };
 
-      Service = {
-        Type = "oneshot";
+    #   Service = {
+    #     Type = "oneshot";
 
-        ExecStart = "${hyprland-display-switcher}/bin/hyprland-display-switcher";
-      };
+    #     ExecStart = "${hyprland-display-switcher}/bin/hyprland-display-switcher";
+    #   };
 
-      Install = {
-        WantedBy = ["hyprland-session.target"];
-      };
-    };
+    #   Install = {
+    #     WantedBy = ["hyprland-session.target"];
+    #   };
+    # };
   };
 }
