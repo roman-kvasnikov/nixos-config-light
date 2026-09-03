@@ -17,10 +17,16 @@ set -euo pipefail
 # ============================================================
 
 # Remnawave subscription URL
-SUB_URL="https://sub.be-free.online/f-_CwgsXqmDH_xqs"
+SUB_URL="https://sub.be-free.online/LtK5tt9LfzVfHLPC"
 
 # User-Agent that matches your Response Rule
-USER_AGENT="XrayNotebook/1.0"
+USER_AGENT="HuaweiNotebook/1.0"
+
+# Target node to keep: matched against a VLESS outbound's vnext address + port.
+# vnext-matching selects VLESS specifically, so it won't collide with a
+# Hysteria2 profile on the same port.
+NODE_ADDRESS="ee.be-free.online"
+NODE_PORT=443
 
 # Paths.
 # IMPORTANT: XRAY_CONFIG_DIR must be the SAME directory the running Xray reads
@@ -66,12 +72,22 @@ if ! echo "${BODY}" | jq empty 2>/dev/null; then
     exit 1
 fi
 
-# If the response is an array, take the first element; otherwise keep as-is.
-# Result is a single JSON object (no surrounding [ ]).
-RESULT=$(echo "${BODY}" | jq 'if type == "array" then .[0] else . end')
+# If the response is an array, pick the element whose config uses the target
+# node (VLESS vnext address + port); otherwise keep the object as-is.
+RESULT=$(echo "${BODY}" | jq \
+    --arg addr "${NODE_ADDRESS}" --argjson port "${NODE_PORT}" '
+    if type == "array"
+    then first(.[] | select(any(
+        .outbounds[]?.settings?.vnext?[]?;
+        .address? == $addr and .port? == $port
+    )))
+    else .
+    end
+')
 
-if [[ "${RESULT}" == "null" ]]; then
-    log "ERROR: config array is empty (no first element)"
+# first(empty) yields nothing → RESULT is empty (not "null"), so check both.
+if [[ -z "${RESULT}" || "${RESULT}" == "null" ]]; then
+    log "ERROR: no config found for ${NODE_ADDRESS}:${NODE_PORT}"
     exit 1
 fi
 
@@ -83,6 +99,7 @@ fi
 # mktemp with a .json suffix so Xray detects the JSON format by extension.
 CONFIG_TMP="$(mktemp "${XRAY_CONFIG_DIR}/config.XXXXXX.json")"
 echo "${RESULT}" > "${CONFIG_TMP}"
+chmod 644 "${CONFIG_TMP}"
 
 # Validate the candidate config BEFORE touching the live file.
 # NOTE: `xray run -test` is not documented in the official Xray-core docs;

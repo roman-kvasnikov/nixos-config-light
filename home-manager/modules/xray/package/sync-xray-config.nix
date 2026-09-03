@@ -13,6 +13,7 @@ pkgs.writeShellApplication {
     curl
     jq
     systemd
+    xray
   ];
 
   text =
